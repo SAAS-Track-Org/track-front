@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { deliveryService } from '@/services/api/delivery.service'
 import { wsService } from '@/services/websocket/wsService'
 import type { TrackDeliveryResponse, LocationUpdate } from '@/types'
@@ -10,20 +10,21 @@ interface UseTrackDeliveryResult {
   error: string | null
 }
 
-export function useTrackDelivery(publicCodeClient: string): UseTrackDeliveryResult {
+export function useTrackDelivery(publicCodeClient: string, orderCode: string): UseTrackDeliveryResult {
   const [delivery, setDelivery] = useState<TrackDeliveryResponse | null>(null)
-  const [location, setLocation] = useState<LocationUpdate | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  const [location, setLocation]  = useState<LocationUpdate | null>(null)
+  const [loading, setLoading]    = useState(true)
+  const [error, setError]        = useState<string | null>(null)
 
-  // Busca dados iniciais
+  const unsubscribeRef = useRef<(() => void) | null>(null)
+
+  // ── Busca dados iniciais ──
   useEffect(() => {
     setLoading(true)
     deliveryService
-      .track(publicCodeClient)
+      .track(publicCodeClient, orderCode)
       .then((data) => {
         setDelivery(data)
-        // Seta localização inicial se já existir
         if (data.currentLat && data.currentLng) {
           setLocation({ lat: data.currentLat, lng: data.currentLng })
         }
@@ -32,16 +33,19 @@ export function useTrackDelivery(publicCodeClient: string): UseTrackDeliveryResu
       .finally(() => setLoading(false))
   }, [publicCodeClient])
 
-  // Conecta WebSocket e assina canal de localização
+  // ── WebSocket ──
   useEffect(() => {
     wsService.connect(() => {
-      const unsubscribe = wsService.subscribeToLocation(publicCodeClient, (loc) => {
+      unsubscribeRef.current = wsService.subscribeToLocation(publicCodeClient, (loc) => {
         setLocation(loc)
       })
-      return unsubscribe
     })
 
-    return () => wsService.disconnect()
+    return () => {
+      unsubscribeRef.current?.()
+      unsubscribeRef.current = null
+      wsService.disconnect()
+    }
   }, [publicCodeClient])
 
   return { delivery, location, loading, error }
