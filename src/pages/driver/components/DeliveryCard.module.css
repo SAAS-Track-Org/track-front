@@ -1,0 +1,173 @@
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  cursor: pointer;
+  transition: border-color 0.15s ease, transform 0.1s ease;
+}
+
+.card:hover {
+  border-color: color-mix(in srgb, var(--orange) 40%, var(--border));
+  transform: translateY(-1px);
+}
+
+/* ── Header ── */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.25rem;
+  gap: 1rem;
+}
+
+.left {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-width: 0;
+}
+
+.nameRow {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.deliverymanIcon {
+  font-size: 0.875rem;
+  flex-shrink: 0;
+}
+
+.deliverymanName {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 0.9375rem;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.clientName {
+  font-family: var(--font-sans);
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+  padding-left: 1.5rem;
+}
+
+/* ── Right ── */
+.right {
+  flex-shrink: 0;
+}
+
+.deliveryStatus {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  font-family: var(--font-sans);
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+
+.statusDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* ── Body ── */
+.body {
+  border-top: 1px solid var(--border);
+  padding: 1rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+}
+
+.metaItem {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.metaLabel {
+  font-family: var(--font-sans);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+}
+
+.metaValue {
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  color: var(--text);
+}
+
+/* ── Order codes ── */
+.orderCodes {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.orderCodesLabel {
+  font-family: var(--font-sans);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+}
+
+.codeList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.375rem;
+}
+
+/* ── Order item com dot ── */
+.orderItem {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 0.25rem 0.625rem;
+  cursor: default;
+  position: relative;
+}
+
+.orderDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* ── Pulsando quando pendente ── */
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.4; transform: scale(0.75); }
+}
+
+.orderDotPending {
+  animation: pulse 1.4s ease-in-out infinite;
+}
+
+.codeBadge {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--text);
+}

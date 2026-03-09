@@ -1,0 +1,66 @@
+/* Extraído de OrderDetailCard.module.css */
+
+.paymentGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.5rem;
+}
+
+.paymentBtn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.625rem 0.5rem;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+  font-size: 1rem;
+}
+
+.paymentBtn:hover {
+  border-color: var(--orange);
+}
+
+.paymentBtnActive {
+  border-color: var(--orange);
+  background: color-mix(in srgb, var(--orange) 10%, var(--surface2));
+}
+
+.paymentBtnSaved {
+  border-color: color-mix(in srgb, var(--green) 50%, var(--border));
+}
+
+.paymentBadgeSaved {
+  font-family: var(--font-sans);
+  font-size: 0.5625rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--green);
+  background: color-mix(in srgb, var(--green) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--green) 30%, transparent);
+  border-radius: 999px;
+  padding: 0.1rem 0.4rem;
+}
+
+.paymentBadgeNew {
+  font-family: var(--font-sans);
+  font-size: 0.5625rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--orange);
+  background: color-mix(in srgb, var(--orange) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--orange) 30%, transparent);
+  border-radius: 999px;
+  padding: 0.1rem 0.4rem;
+}
+
+.paymentLabel {
+  font-family: var(--font-sans);
+  font-size: 0.6875rem;
+  color: var(--text);
+}

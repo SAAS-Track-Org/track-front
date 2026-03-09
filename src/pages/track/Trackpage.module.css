@@ -1,0 +1,375 @@
+/* ── Page ── */
+.page {
+  min-height: 100dvh;
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Centered (loading / error) ── */
+.centered {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 2rem;
+}
+
+.loadingSpinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid var(--border);
+  border-top-color: var(--orange);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+.loadingText {
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+
+.errorIcon {
+  font-size: 2rem;
+  color: var(--red);
+}
+
+.errorText {
+  font-family: var(--font-sans);
+  font-size: 0.9375rem;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+/* ── Header ── */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.logoIcon { font-size: 1.25rem; }
+
+.logoText {
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.02em;
+}
+
+.orderCode {
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: var(--orange);
+  background: color-mix(in srgb, var(--orange) 10%, transparent);
+  border: 1px solid color-mix(in srgb, var(--orange) 25%, transparent);
+  padding: 0.25rem 0.625rem;
+  border-radius: 999px;
+}
+
+/* ── Main ── */
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1.25rem;
+  max-width: 480px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+/* ── Status card ── */
+.statusCard {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 1rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+}
+
+/* linha com ícone + texto */
+.statusRow {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+}
+
+.statusIcon {
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.statusInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+}
+
+.statusLabel {
+  font-family: var(--font-sans);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--text-muted);
+}
+
+.statusValue {
+  font-family: var(--font-sans);
+  font-size: 1.0625rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+/* Botão navegação — full width, separado abaixo do status */
+.btnNavigate {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background: var(--orange);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-md);
+  font-family: var(--font-sans);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.15s;
+  animation: glowPulse 2s ease-in-out infinite;
+}
+
+.btnNavigate:hover { opacity: 0.88; }
+
+@keyframes glowPulse {
+  0%, 100% { box-shadow: 0 0 0 0   color-mix(in srgb, var(--orange) 40%, transparent); }
+  50%       { box-shadow: 0 0 0 8px color-mix(in srgb, var(--orange) 0%,  transparent); }
+}
+
+/* ── Endereço confirmado ── */
+.confirmedCard {
+  background: var(--surface);
+  border: 1px solid color-mix(in srgb, var(--green) 40%, var(--border));
+  border-radius: var(--radius-md);
+  padding: 1.125rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+}
+
+.confirmedTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.confirmedBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-family: var(--font-sans);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--green);
+  background: color-mix(in srgb, var(--green) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--green) 30%, transparent);
+  border-radius: 999px;
+  padding: 0.2rem 0.65rem;
+}
+
+.btnEdit {
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-muted);
+  font-family: var(--font-sans);
+  font-size: 0.8125rem;
+  padding: 0.3rem 0.875rem;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.btnEdit:hover {
+  color: var(--text);
+  border-color: var(--text-muted);
+}
+
+.confirmedAddress {
+  font-family: var(--font-sans);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--text);
+  margin: 0;
+  line-height: 1.4;
+}
+
+.confirmedAddressSub {
+  font-family: var(--font-sans);
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.paymentSaved {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--border);
+  margin-top: 0.125rem;
+}
+
+.paymentSavedLabel {
+  font-family: var(--font-sans);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+}
+
+.paymentSavedValue {
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+/* ── Form card ── */
+.formCard {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.formIntro {
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* ── Payment section ── */
+.paymentSection {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.sectionLabel {
+  font-family: var(--font-sans);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.optional {
+  font-size: 0.625rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 0.1rem 0.5rem;
+}
+
+/* ── Form actions ── */
+.formActions {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.btnCancel {
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  color: var(--text-muted);
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  padding: 0.75rem 1.25rem;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+  flex-shrink: 0;
+}
+
+.btnCancel:hover {
+  border-color: var(--text-muted);
+  color: var(--text);
+}
+
+.btnSave {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  background: var(--orange);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-md);
+  font-family: var(--font-sans);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.btnSave:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btnSave:hover:not(:disabled) { opacity: 0.88; }
+
+/* ── Spinner ── */
+.spinner {
+  width: 13px;
+  height: 13px;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}

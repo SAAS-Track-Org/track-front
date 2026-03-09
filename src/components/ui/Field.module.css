@@ -1,0 +1,22 @@
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.span2 {
+  grid-column: span 2;
+}
+
+.label {
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.error {
+  font-size: 0.68rem;
+  color: var(--red);
+}

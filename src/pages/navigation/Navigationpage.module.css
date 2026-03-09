@@ -1,0 +1,342 @@
+/* ── Page ── */
+.page {
+  position: fixed;
+  inset: 0;
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Loading / centered ── */
+.centered {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+}
+
+/* Loading overlay sobre o mapa */
+.loadingOverlay {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+}
+
+.loadingSpinner {
+  width: 36px;
+  height: 36px;
+  border: 3px solid var(--border);
+  border-top-color: var(--orange);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+.loadingText {
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+
+/* ── Mapa fullscreen ── */
+.map {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  background: #0a0a0e; /* preto enquanto tiles carregam */
+}
+
+/* Fundo do container Leaflet — sobrescreve o branco padrão */
+.map :global(.leaflet-container) {
+  background: #0a0a0e;
+}
+
+/* ── Header flutuante ── */
+.header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.875rem 1rem;
+  background: linear-gradient(
+    to bottom,
+    rgba(10, 10, 14, 0.92) 0%,
+    rgba(10, 10, 14, 0) 100%
+  );
+  backdrop-filter: blur(0px);
+}
+
+.btnBack2 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-size: 1rem;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.15s;
+}
+
+.btnBack2:hover {
+  background: var(--surface2);
+}
+
+.headerInfo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.headerTitle {
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.headerSub {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--orange);
+}
+
+/* ── Indicador WS ao vivo ── */
+.wsIndicator {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  background: color-mix(in srgb, var(--green) 12%, var(--surface));
+  border: 1px solid color-mix(in srgb, var(--green) 30%, transparent);
+  border-radius: 999px;
+  padding: 0.25rem 0.625rem;
+}
+
+.wsDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--green);
+  animation: pulse 1.8s ease-in-out infinite;
+}
+
+.wsLabel {
+  font-family: var(--font-sans);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  color: var(--green);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* ── Bottom card ── */
+.bottomCard {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 10;
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
+  padding: 1.25rem 1.25rem calc(1.25rem + env(safe-area-inset-bottom));
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.4);
+}
+
+.bottomCardRow {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.875rem;
+}
+
+.bottomIcon {
+  font-size: 1.5rem;
+  flex-shrink: 0;
+  margin-top: 0.1rem;
+}
+
+.bottomInfo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+}
+
+.bottomLabel {
+  font-family: var(--font-sans);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--text-muted);
+}
+
+.bottomAddress {
+  font-family: var(--font-sans);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1.4;
+}
+
+.bottomAddressSub {
+  font-family: var(--font-sans);
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+}
+
+/* ── Badge "a caminho" ── */
+.arrivingBadge {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.625rem 0.875rem;
+  background: color-mix(in srgb, var(--orange) 10%, transparent);
+  border: 1px solid color-mix(in srgb, var(--orange) 30%, transparent);
+  border-radius: var(--radius-md);
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--orange);
+}
+
+.arrivingDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--orange);
+  flex-shrink: 0;
+  animation: pulse 1.4s ease-in-out infinite;
+}
+
+/* ── Markers Leaflet ── */
+.motoMarker {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background: var(--orange);
+  border-radius: 50%;
+  border: 2.5px solid #fff;
+  font-size: 1.25rem;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.5);
+  animation: markerPop 0.3s ease-out;
+}
+
+.destMarker {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: var(--surface);
+  border-radius: 50%;
+  border: 2px solid var(--green);
+  font-size: 1.1rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.45);
+}
+
+@keyframes markerPop {
+  from { transform: scale(0.5); opacity: 0; }
+  to   { transform: scale(1);   opacity: 1; }
+}
+
+/* ── Tela de entrega concluída ── */
+.deliveredScreen {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.25rem;
+  padding: 2rem 1.5rem;
+  text-align: center;
+}
+
+.deliveredIconWrap {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--green) 15%, transparent);
+  border: 2px solid color-mix(in srgb, var(--green) 40%, transparent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: popIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.deliveredIcon {
+  font-size: 2rem;
+  color: var(--green);
+  font-weight: 700;
+}
+
+.deliveredTitle {
+  font-family: var(--font-sans);
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--text);
+  margin: 0;
+  letter-spacing: -0.02em;
+}
+
+.deliveredSub {
+  font-family: var(--font-sans);
+  font-size: 0.9375rem;
+  color: var(--text-muted);
+  margin: 0;
+  line-height: 1.6;
+}
+
+.btnBack {
+  margin-top: 0.5rem;
+  padding: 0.75rem 1.75rem;
+  background: var(--orange);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-md);
+  font-family: var(--font-sans);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.btnBack:hover { opacity: 0.88; }
+
+/* ── Animations ── */
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1;   transform: scale(1);   }
+  50%       { opacity: 0.4; transform: scale(0.75); }
+}
+
+@keyframes popIn {
+  from { transform: scale(0.6); opacity: 0; }
+  to   { transform: scale(1);   opacity: 1; }
+}

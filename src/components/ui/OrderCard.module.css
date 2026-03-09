@@ -1,0 +1,61 @@
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.headerRight {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.tag {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--orange);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.total {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--green);
+}
+
+.btnRemove {
+  padding: 4px 10px;
+  background: transparent;
+  color: var(--red);
+  border: 1px solid rgba(255, 71, 87, 0.3);
+  border-radius: var(--radius-sm);
+  font-size: 0.7rem;
+  transition: all 0.15s;
+}
+
+.btnRemove:hover {
+  background: rgba(255, 71, 87, 0.08);
+}
+
+.sectionLabel {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  padding-top: 4px;
+  border-top: 1px solid var(--border);
+}
