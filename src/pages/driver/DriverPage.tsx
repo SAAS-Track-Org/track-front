@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import { CheckCircle, Navigation, Package } from "lucide-react";
 import { useDriverDelivery } from "@/hooks/useDelivery";
 import type { DriverOrderDetail } from "@/types";
-import styles from "./DriverPage.module.css";
+import styles from "./Driverpage.module.css";
 import googleMapsLogo from "@/img/google-maps-logo.png";
 import wazeLogo from "@/img/waze-logo.png";
 

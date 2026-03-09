@@ -106,25 +106,37 @@
   font-size: 0.875rem;
   font-weight: 700;
   cursor: pointer;
-  transition: opacity 0.15s, box-shadow 0.3s;
+  transition:
+    opacity 0.15s,
+    box-shadow 0.3s;
   white-space: nowrap;
   flex-shrink: 0;
 }
 
-.pulsBtnStart{
-    box-shadow: 0 0 12px color-mix(in srgb, var(--orange) 50%, transparent),
-              0 0 24px color-mix(in srgb, var(--orange) 25%, transparent);
+.pulsBtnStart {
+  box-shadow:
+    0 0 12px color-mix(in srgb, var(--orange) 50%, transparent),
+    0 0 24px color-mix(in srgb, var(--orange) 25%, transparent);
   animation: glowPulse 2.5s ease-in-out infinite;
 }
 
 @keyframes glowPulse {
-  0%, 100% { box-shadow: 0 0 10px color-mix(in srgb, var(--orange) 45%, transparent),
-                          0 0 22px color-mix(in srgb, var(--orange) 20%, transparent); }
-  50%       { box-shadow: 0 0 18px color-mix(in srgb, var(--orange) 65%, transparent),
-                          0 0 36px color-mix(in srgb, var(--orange) 30%, transparent); }
+  0%,
+  100% {
+    box-shadow:
+      0 0 10px color-mix(in srgb, var(--orange) 45%, transparent),
+      0 0 22px color-mix(in srgb, var(--orange) 20%, transparent);
+  }
+  50% {
+    box-shadow:
+      0 0 18px color-mix(in srgb, var(--orange) 65%, transparent),
+      0 0 36px color-mix(in srgb, var(--orange) 30%, transparent);
+  }
 }
 
-.btnStart:hover:not(:disabled) { opacity: 0.85; }
+.btnStart:hover:not(:disabled) {
+  opacity: 0.85;
+}
 .btnStart:disabled {
   opacity: 0.25;
   cursor: not-allowed;
@@ -170,8 +182,12 @@
 }
 
 @keyframes shimmer {
-  0%   { background-position: 200% center; }
-  100% { background-position: -200% center; }
+  0% {
+    background-position: 200% center;
+  }
+  100% {
+    background-position: -200% center;
+  }
 }
 
 .orderHeader {
@@ -240,8 +256,15 @@
 }
 
 @keyframes pulse {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50%       { opacity: 0.4; transform: scale(0.75); }
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.4;
+    transform: scale(0.75);
+  }
 }
 
 .chevron {
@@ -343,8 +366,13 @@
   transition: opacity 0.15s;
 }
 
-.btnDeliver:hover:not(:disabled) { opacity: 0.85; }
-.btnDeliver:disabled { opacity: 0.6; cursor: not-allowed; }
+.btnDeliver:hover:not(:disabled) {
+  opacity: 0.85;
+}
+.btnDeliver:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
 
 .deliveredBadge {
   display: flex;
@@ -372,8 +400,12 @@
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to   { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 .modal {
@@ -391,8 +423,14 @@
 }
 
 @keyframes slideUp {
-  from { opacity: 0; transform: translateY(12px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .modalIcon {
@@ -449,7 +487,9 @@
   font-family: var(--font-sans);
   font-size: 0.875rem;
   cursor: pointer;
-  transition: color 0.15s, border-color 0.15s;
+  transition:
+    color 0.15s,
+    border-color 0.15s;
 }
 
 .modalBtnCancel:hover {
@@ -471,7 +511,9 @@
   transition: opacity 0.15s;
 }
 
-.modalBtnConfirm:hover { opacity: 0.85; }
+.modalBtnConfirm:hover {
+  opacity: 0.85;
+}
 
 /* ── Spinner ── */
 .spinner {
@@ -485,7 +527,9 @@
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* ── Nav Links ── */
@@ -499,7 +543,9 @@
 .btnNav {
   flex: 1;
   padding: 1rem;
-  transition: color 0.15s, border-color 0.15s;
+  transition:
+    color 0.15s,
+    border-color 0.15s;
   display: flex;
   align-items: center;
   justify-content: center;

@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useNavigationTracking } from '@/hooks/useNavigationTracking'
-import styles from './NavigationPage.module.css'
+import styles from './Navigationpage.module.css'
 
 declare const L: any
 
