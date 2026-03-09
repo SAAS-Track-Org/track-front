@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { deliveryService } from '@/services/api/delivery.service'
 import type { StandbyOrderSummary } from '@/types'
-import styles from './StandbyOrderSelect.module.css'
+import styles from './Standbyorderselect.module.css'
 
 interface Props {
   onLink: (orderCode: string) => Promise<void>

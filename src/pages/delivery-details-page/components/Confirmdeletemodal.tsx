@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { Trash2 } from 'lucide-react'
-import styles from './ConfirmDeleteModal.module.css'
+import styles from './Confirmdeletemodal.module.css'
 
 interface Props {
   orderCode: string

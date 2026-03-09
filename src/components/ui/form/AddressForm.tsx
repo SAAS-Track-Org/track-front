@@ -2,7 +2,7 @@ import { Field } from "@/components/ui/Field";
 import { Input } from "@/components/ui/Input";
 import { useCep } from "@/hooks/useCep";
 import type { AddressDetail } from "@/types";
-import styles from "./AddressForm.module.css";
+import styles from "./Addressform.module.css";
 
 export const EMPTY_ADDRESS: AddressDetail = {
   zipCode: "",

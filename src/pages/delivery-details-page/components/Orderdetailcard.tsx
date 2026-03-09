@@ -12,7 +12,7 @@ import type {
   AddressDetail,
   OrderDeliveryStatus,
 } from "@/types";
-import styles from "./OrderDetailCard.module.css";
+import styles from "./Orderdetailcard.module.css";
 
 const DELIVERY_STATUS_CONFIG: Record<string, { label: string; color: string }> = {
   WAITING:    { label: "Aguardando", color: "var(--yellow)"     },

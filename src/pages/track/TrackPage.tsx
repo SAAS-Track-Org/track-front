@@ -5,7 +5,7 @@ import { AddressForm } from '@/components/ui/form/AddressForm'
 import { PaymentMethodSelector , PAYMENT_METHODS} from '@/components/ui/form/PaymentMethodSelect'
 import { EMPTY_ADDRESS } from '@/components/ui/form/AddressForm'
 import type { AddressDetail, PaymentMethod } from '@/types'
-import styles from './TrackPage.module.css'
+import styles from './Trackpage.module.css'
 
 const ORDER_DELIVERY_STATUS_CONFIG: Record<string, { label: string; color: string; icon: string }> = {
   WAITING:    { label: 'Aguardando',  color: 'var(--yellow)',     icon: '⏳' },

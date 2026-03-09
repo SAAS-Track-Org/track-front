@@ -1,5 +1,5 @@
 import type { PaymentMethod } from "@/types";
-import styles from "./PaymentMethodSelector.module.css";
+import styles from "./Paymentmethodselector.module.css";
 
 export const PAYMENT_METHODS: { id: PaymentMethod; label: string; icon: string }[] = [
   { id: "CASH",         label: "Dinheiro",         icon: "💵" },
