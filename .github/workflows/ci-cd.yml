@@ -76,6 +76,7 @@ jobs:
     name: Deploy
     runs-on: ubuntu-latest
     needs: build-and-push
+    environment: secret-front
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
 
     steps:
