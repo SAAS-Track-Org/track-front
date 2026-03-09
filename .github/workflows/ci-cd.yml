@@ -8,7 +8,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE: ghcr.io/${{ github.repository }}/frontend
+  IMAGE: ghcr.io/saas-track-org/track-front
 
 jobs:
 
@@ -91,10 +91,7 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
             cd ~/mototrack
-
-            # Atualiza só a tag do frontend no .env
             sed -i "s/^FRONTEND_IMAGE_TAG=.*/FRONTEND_IMAGE_TAG=${{ steps.tag.outputs.TAG }}/" .env
-
             echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
             docker compose pull frontend
             docker compose up -d --no-deps frontend
