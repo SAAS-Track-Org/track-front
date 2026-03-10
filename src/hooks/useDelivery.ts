@@ -8,7 +8,6 @@ interface UseDriverDeliveryResult {
   error: string | null;
   starting: boolean;
   deliveringOrder: string | null;
-  locationGranted: boolean;
   startDelivery: () => Promise<void>;
   deliverOrder: (orderCode: string) => Promise<void>;
 }
@@ -207,7 +206,6 @@ export function useDriverDelivery(
     error,
     starting,
     deliveringOrder,
-    locationGranted,
     startDelivery,
     deliverOrder,
   };

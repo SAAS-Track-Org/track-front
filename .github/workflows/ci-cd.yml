@@ -12,7 +12,7 @@ env:
 
 jobs:
 
-  # ── 1. Build & Lint ─────────────────────────────────────────────────────────
+  # ── 1. Build ─────────────────────────────────────────────────────────────
   test:
     name: Build
     runs-on: ubuntu-latest
@@ -34,7 +34,7 @@ jobs:
         env:
           VITE_WS_URL: ${{ secrets.VITE_WS_URL }}
 
-  # ── 2. Build & Push imagem Docker ──────────────────────────────────────────
+  # ── 2. Build & Push ─────────────────────────────────────────────────────────
   build-and-push:
     name: Build & Push
     runs-on: ubuntu-latest
@@ -71,11 +71,42 @@ jobs:
           build-args: |
             VITE_WS_URL=${{ secrets.VITE_WS_URL }}
 
-  # ── 3. Deploy na EC2 ───────────────────────────────────────────────────────
+  # ── 3. Health Check da instância ────────────────────────────────────────────
+  health-check:
+    name: Health Check
+    runs-on: ubuntu-latest
+    needs: build-and-push
+    environment: secret-front
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+
+    steps:
+      - name: Verifica instância via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            echo "=== Docker ==="
+            docker compose -f ~/mototrack/docker-compose.yml ps
+
+            echo "=== Postgres ==="
+            docker inspect --format='{{.State.Health.Status}}' mototrack-postgres
+
+            echo "=== Nginx ==="
+            curl -sf -o /dev/null -w "HTTP %{http_code}" https://traccks.duckdns.org || echo "Nginx não responde"
+
+            echo "=== Disco ==="
+            df -h /
+
+            echo "=== Memória ==="
+            free -m
+
+  # ── 4. Deploy ───────────────────────────────────────────────────────────────
   deploy:
     name: Deploy
     runs-on: ubuntu-latest
-    needs: build-and-push
+    needs: health-check
     environment: secret-front
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
 

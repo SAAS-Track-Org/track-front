@@ -246,7 +246,6 @@ export function DriverPage() {
     error,
     starting,
     deliveringOrder,
-    locationGranted,
     startDelivery,
     deliverOrder,
   } = useDriverDelivery(publicCodeDeliveryman!);
@@ -438,12 +437,6 @@ export function DriverPage() {
               </button>
             </div>
           </div>
-        </div>
-      )}
-      {!locationGranted && (
-        <div className={styles.locationWarning}>
-          ⚠ Permita o acesso à localização para que o cliente possa rastrear sua
-          entrega.
         </div>
       )}
     </div>
