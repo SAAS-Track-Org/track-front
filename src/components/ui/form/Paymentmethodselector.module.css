@@ -64,3 +64,9 @@
   font-size: 0.6875rem;
   color: var(--text);
 }
+
+/* Selecionado + já era o valor salvo — borda verde, sem badge */
+.paymentBtnSavedActive {
+  border-color: var(--green) !important;
+  box-shadow: 0 0 0 1px var(--green);
+}

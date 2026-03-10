@@ -37,7 +37,6 @@ export function AddressForm({
     if (digits.length === 8) {
       const result = await fetchCep(digits);
       if (result) {
-        // useCep retorna result.street / .neighborhood / .city / .state
         onChange({
           ...address,
           zipCode:      digits,
@@ -57,42 +56,34 @@ export function AddressForm({
 
   return (
     <div className={styles.wrapper}>
-      <span className={styles.sectionLabel}>
-        Endereço <span className={styles.required}>obrigatório</span>
-      </span>
+      <span className={styles.sectionLabel}>Endereço</span>
 
       {addressError && (
         <span className={styles.addressError}>⚠ {addressError}</span>
       )}
 
-      <div className={styles.addressGrid}>
-        <Field label="CEP" error={cepError ?? undefined}>
-          <div className={styles.cepWrap}>
-            <Input
-              placeholder="01310-100"
-              value={address.zipCode.replace(/(\d{5})(\d)/, "$1-$2")}
-              onChange={(e) => handleCepChange(e.target.value)}
-              maxLength={9}
-            />
-            {cepLoading && <span className={styles.cepSpinner} />}
-          </div>
-        </Field>
-
-        <Field
-          label="Número"
-          error={addressError && !address.number.trim() ? " " : undefined}
-        >
+      {/* CEP no topo com dica de autopreenchimento */}
+      <Field
+        label="CEP"
+        error={cepError ?? undefined}
+        hint="Preencha o CEP para autocompletar os campos abaixo"
+      >
+        <div className={styles.cepWrap}>
           <Input
-            error={!!(addressError && !address.number.trim())}
-            placeholder="123"
-            value={address.number}
-            onChange={(e) => set("number", e.target.value)}
+            placeholder="01310-100"
+            value={address.zipCode.replace(/(\d{5})(\d)/, "$1-$2")}
+            onChange={(e) => handleCepChange(e.target.value)}
+            maxLength={9}
           />
-        </Field>
+          {cepLoading && <span className={styles.cepSpinner} />}
+        </div>
+      </Field>
 
-        {/* span2 → Field ocupa as 2 colunas (prop nativa do seu Field) */}
+      <div className={styles.addressGrid}>
+
+        {/* Rua — obrigatório, span2 */}
         <Field
-          label="Rua"
+          label="Rua *"
           span2
           error={addressError && !address.street.trim() ? " " : undefined}
         >
@@ -104,6 +95,33 @@ export function AddressForm({
           />
         </Field>
 
+        {/* Número — obrigatório */}
+        <Field
+          label="Número *"
+          error={addressError && !address.number.trim() ? " " : undefined}
+        >
+          <Input
+            error={!!(addressError && !address.number.trim())}
+            placeholder="123"
+            value={address.number}
+            onChange={(e) => set("number", e.target.value)}
+          />
+        </Field>
+
+        {/* Bairro — obrigatório */}
+        <Field
+          label="Bairro *"
+          error={addressError && !address.neighborhood.trim() ? " " : undefined}
+        >
+          <Input
+            error={!!(addressError && !address.neighborhood.trim())}
+            placeholder="Centro"
+            value={address.neighborhood}
+            onChange={(e) => set("neighborhood", e.target.value)}
+          />
+        </Field>
+
+        {/* Complemento — opcional */}
         <Field label="Complemento">
           <Input
             placeholder="Apto 4"
@@ -112,14 +130,7 @@ export function AddressForm({
           />
         </Field>
 
-        <Field label="Bairro">
-          <Input
-            placeholder="Centro"
-            value={address.neighborhood}
-            onChange={(e) => set("neighborhood", e.target.value)}
-          />
-        </Field>
-
+        {/* Cidade — opcional */}
         <Field label="Cidade">
           <Input
             placeholder="São Paulo"
@@ -128,6 +139,7 @@ export function AddressForm({
           />
         </Field>
 
+        {/* Estado — opcional */}
         <Field label="Estado">
           <Input
             placeholder="SP"
@@ -136,6 +148,7 @@ export function AddressForm({
             onChange={(e) => set("state", e.target.value.toUpperCase())}
           />
         </Field>
+
       </div>
     </div>
   );

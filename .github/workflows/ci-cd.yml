@@ -71,7 +71,7 @@ jobs:
           build-args: |
             VITE_WS_URL=${{ secrets.VITE_WS_URL }}
 
-  # ── 3. Health Check da instância ────────────────────────────────────────────
+  # ── 3. Health Check — sobe serviços se necessário ───────────────────────────
   health-check:
     name: Health Check
     runs-on: ubuntu-latest
@@ -80,27 +80,48 @@ jobs:
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
 
     steps:
-      - name: Verifica instância via SSH
+      - name: Verifica e recupera instância
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            echo "=== Docker ==="
-            docker compose -f ~/mototrack/docker-compose.yml ps
+            cd ~/mototrack
 
-            echo "=== Postgres ==="
-            docker inspect --format='{{.State.Health.Status}}' mototrack-postgres
+            echo "=== Status atual ==="
+            docker compose ps
 
-            echo "=== Nginx ==="
-            curl -sf -o /dev/null -w "HTTP %{http_code}" https://traccks.duckdns.org || echo "Nginx não responde"
+            echo "=== Verificando Postgres ==="
+            POSTGRES_STATUS=$(docker inspect --format='{{.State.Health.Status}}' mototrack-postgres 2>/dev/null || echo "not_running")
+            echo "Postgres: $POSTGRES_STATUS"
+            if [ "$POSTGRES_STATUS" != "healthy" ]; then
+              echo "⚠ Postgres fora — subindo..."
+              docker compose up -d postgres
+              sleep 10
+            fi
+
+            echo "=== Verificando Nginx ==="
+            NGINX_RUNNING=$(docker inspect --format='{{.State.Running}}' mototrack-nginx 2>/dev/null || echo "false")
+            echo "Nginx running: $NGINX_RUNNING"
+            if [ "$NGINX_RUNNING" != "true" ]; then
+              echo "⚠ Nginx fora — subindo..."
+              docker compose up -d nginx
+              sleep 5
+            fi
+
+            echo "=== Verificando HTTPS ==="
+            HTTP_CODE=$(curl -sf -o /dev/null -w "%{http_code}" https://traccks.duckdns.org || echo "000")
+            echo "HTTPS response: $HTTP_CODE"
 
             echo "=== Disco ==="
             df -h /
 
             echo "=== Memória ==="
             free -m
+
+            echo "=== Status final ==="
+            docker compose ps
 
   # ── 4. Deploy ───────────────────────────────────────────────────────────────
   deploy:

@@ -1,34 +1,62 @@
+import { PAYMENT_METHODS } from "./Paymentmethods"
 import type { PaymentMethod } from "@/types";
 import styles from "./Paymentmethodselector.module.css";
 
-export const PAYMENT_METHODS: { id: PaymentMethod; label: string; icon: string }[] = [
-  { id: "CASH",         label: "Dinheiro",         icon: "💵" },
-  { id: "PIX",          label: "Pix",              icon: "⚡" },
-  { id: "CREDIT_CARD",  label: "Crédito",          icon: "💳" },
-  { id: "DEBIT_CARD",   label: "Débito",           icon: "🏧" },
-  { id: "MEAL_VOUCHER", label: "Vale refeição",     icon: "🍽️" },
-  { id: "FOOD_VOUCHER", label: "Vale alimentação",  icon: "🛒" },
-];
-
-interface PaymentMethodSelectorProps {
-  /** Método atualmente selecionado na UI */
+// ── Modo único (comportamento original) ──────────────────────────────────────
+interface SingleProps {
+  mode?: "single";
   value: PaymentMethod | null;
-  /** Método já salvo no servidor — controla badge "salvo" / "novo" */
   savedValue?: PaymentMethod | null;
   onChange: (method: PaymentMethod) => void;
 }
 
-export function PaymentMethodSelector({
-  value,
-  savedValue,
-  onChange,
-}: PaymentMethodSelectorProps) {
+// ── Modo múltiplo ─────────────────────────────────────────────────────────────
+interface MultiProps {
+  mode: "multi";
+  value: PaymentMethod[];
+  savedValue?: PaymentMethod[];
+  onChange: (methods: PaymentMethod[]) => void;
+}
+
+type PaymentMethodSelectorProps = SingleProps | MultiProps;
+
+export function PaymentMethodSelector(props: PaymentMethodSelectorProps) {
+  const isMulti = props.mode === "multi";
+
+  function handleClick(id: PaymentMethod) {
+    if (isMulti) {
+      const current = (props as MultiProps).value;
+      const next = current.includes(id)
+        ? current.filter((m) => m !== id)
+        : [...current, id];
+      (props as MultiProps).onChange(next);
+    } else {
+      (props as SingleProps).onChange(id);
+    }
+  }
+
+  function getStates(id: PaymentMethod) {
+    if (isMulti) {
+      const { value, savedValue = [] } = props as MultiProps;
+      const isSelected      = value.includes(id);
+      const isSaved         = savedValue.includes(id);
+      const isSelectedSaved = isSelected && isSaved;
+      const isChanging      = isSelected && !isSaved;
+      return { isSelected, isSaved, isSelectedSaved, isChanging };
+    } else {
+      const { value, savedValue } = props as SingleProps;
+      const isSelected      = value      === id;
+      const isSaved         = savedValue === id;
+      const isSelectedSaved = isSelected && isSaved;
+      const isChanging      = isSelected && !isSaved;
+      return { isSelected, isSaved, isSelectedSaved, isChanging };
+    }
+  }
+
   return (
     <div className={styles.paymentGrid}>
       {PAYMENT_METHODS.map((m) => {
-        const isSelected = value     === m.id;
-        const isSaved    = savedValue === m.id;
-        const isChanging = isSelected && !isSaved;
+        const { isSelected, isSaved, isSelectedSaved, isChanging } = getStates(m.id);
 
         return (
           <button
@@ -36,22 +64,17 @@ export function PaymentMethodSelector({
             type="button"
             className={[
               styles.paymentBtn,
-              isSelected             ? styles.paymentBtnActive : "",
-              isSaved && !isSelected ? styles.paymentBtnSaved  : "",
+              isSelected             ? styles.paymentBtnActive      : "",
+              isSelectedSaved        ? styles.paymentBtnSavedActive : "",
+              isChanging             ? styles.paymentBtnChanging    : "",
+              isSaved && !isSelected ? styles.paymentBtnSaved       : "",
             ]
               .filter(Boolean)
               .join(" ")}
-            onClick={() => onChange(m.id)}
+            onClick={() => handleClick(m.id)}
           >
             <span>{m.icon}</span>
             <span className={styles.paymentLabel}>{m.label}</span>
-
-            {isSaved && !isChanging && (
-              <span className={styles.paymentBadgeSaved}>salvo</span>
-            )}
-            {isChanging && (
-              <span className={styles.paymentBadgeNew}>novo</span>
-            )}
           </button>
         );
       })}
