@@ -246,6 +246,7 @@ export function DriverPage() {
     error,
     starting,
     deliveringOrder,
+    locationGranted,
     startDelivery,
     deliverOrder,
   } = useDriverDelivery(publicCodeDeliveryman!);
@@ -269,7 +270,7 @@ export function DriverPage() {
       { enableHighAccuracy: true, timeout: 5000 },
     );
     startDelivery();
-    setConfirmStart(false)
+    setConfirmStart(false);
   };
 
   if (loading) {
@@ -331,7 +332,13 @@ export function DriverPage() {
         <div className={styles.routeCard}>
           <div className={styles.routeInfo}>
             <span className={styles.routeLabel}>
-              {allDone ? "✅ Entregas Finalizadas": allAddressesConfirmed ? hasStarted ? "🛵 Entrega em andamento" : "📋 Pronto para iniciar" : "⚠ Endereços pendentes"}
+              {allDone
+                ? "✅ Entregas Finalizadas"
+                : allAddressesConfirmed
+                  ? hasStarted
+                    ? "🛵 Entrega em andamento"
+                    : "📋 Pronto para iniciar"
+                  : "⚠ Endereços pendentes"}
             </span>
             <span className={styles.routeSub}>
               {allDone
@@ -431,6 +438,12 @@ export function DriverPage() {
               </button>
             </div>
           </div>
+        </div>
+      )}
+      {!locationGranted && (
+        <div className={styles.locationWarning}>
+          ⚠ Permita o acesso à localização para que o cliente possa rastrear sua
+          entrega.
         </div>
       )}
     </div>
