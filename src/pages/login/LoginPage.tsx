@@ -1,5 +1,5 @@
 import { useState } from "react";
-import styles from "./LoginPage.module.css";
+import styles from "./Loginpage.module.css";
 import { PaymentMethodSelector } from "@/components/ui/form/PaymentMethodSelect";
 import type { PaymentMethod } from "@/types";
 import { useLogin } from "@/hooks/useLogin";
