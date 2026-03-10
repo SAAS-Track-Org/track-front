@@ -1,19 +1,9 @@
+import { PAYMENT_METHODS } from "./Paymentmethods"
 import type { PaymentMethod } from "@/types";
 import styles from "./Paymentmethodselector.module.css";
 
-export const PAYMENT_METHODS: { id: PaymentMethod; label: string; icon: string }[] = [
-  { id: "CASH",         label: "Dinheiro",         icon: "💵" },
-  { id: "PIX",          label: "Pix",              icon: "⚡" },
-  { id: "CREDIT_CARD",  label: "Crédito",          icon: "💳" },
-  { id: "DEBIT_CARD",   label: "Débito",           icon: "🏧" },
-  { id: "MEAL_VOUCHER", label: "Vale refeição",     icon: "🍽️" },
-  { id: "FOOD_VOUCHER", label: "Vale alimentação",  icon: "🛒" },
-];
-
 interface PaymentMethodSelectorProps {
-  /** Método atualmente selecionado na UI */
   value: PaymentMethod | null;
-  /** Método já salvo no servidor — controla badge "salvo" / "novo" */
   savedValue?: PaymentMethod | null;
   onChange: (method: PaymentMethod) => void;
 }
@@ -26,9 +16,10 @@ export function PaymentMethodSelector({
   return (
     <div className={styles.paymentGrid}>
       {PAYMENT_METHODS.map((m) => {
-        const isSelected = value     === m.id;
-        const isSaved    = savedValue === m.id;
-        const isChanging = isSelected && !isSaved;
+        const isSelected      = value      === m.id
+        const isSaved         = savedValue === m.id
+        const isSelectedSaved = isSelected && isSaved
+        const isChanging      = isSelected && !isSaved
 
         return (
           <button
@@ -36,8 +27,10 @@ export function PaymentMethodSelector({
             type="button"
             className={[
               styles.paymentBtn,
-              isSelected             ? styles.paymentBtnActive : "",
-              isSaved && !isSelected ? styles.paymentBtnSaved  : "",
+              isSelected             ? styles.paymentBtnActive      : "",
+              isSelectedSaved        ? styles.paymentBtnSavedActive : "",
+              isChanging             ? styles.paymentBtnChanging    : "",
+              isSaved && !isSelected ? styles.paymentBtnSaved       : "",
             ]
               .filter(Boolean)
               .join(" ")}
@@ -45,16 +38,9 @@ export function PaymentMethodSelector({
           >
             <span>{m.icon}</span>
             <span className={styles.paymentLabel}>{m.label}</span>
-
-            {isSaved && !isChanging && (
-              <span className={styles.paymentBadgeSaved}>salvo</span>
-            )}
-            {isChanging && (
-              <span className={styles.paymentBadgeNew}>novo</span>
-            )}
           </button>
-        );
+        )
       })}
     </div>
-  );
+  )
 }

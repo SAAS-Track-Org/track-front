@@ -16,7 +16,23 @@
   color: var(--text-muted);
 }
 
+input::placeholder {
+  color: var(--text-muted);
+  opacity: 0.45;
+}
+
+input::placeholder {
+  color: var(--text-muted);
+  opacity: 0.45;
+}
+
 .error {
   font-size: 0.68rem;
   color: var(--red);
+}
+
+.hint {
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  margin-bottom: 0.25rem;
 }
