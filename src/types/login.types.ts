@@ -1,10 +1,7 @@
-import type { PaymentMethod } from "@/types";
-
 // --- Request ---
 
 export interface LoginRequest {
   email: string;
-  paymentMethods: PaymentMethod[];
 }
 
 // --- Responses ---
@@ -19,3 +16,26 @@ export interface LoginResponse {
 export interface AuthConfigResponse {
   sessionDurationHours: number;
 }
+
+// --- Profile ---
+
+export interface UpdateProfileRequest {
+  paymentMethods: string[];
+  establishmentName?: string;
+  address?: string;
+}
+
+export interface ProfileResponse {
+  email: string;
+  paymentMethods: string[];
+  establishmentName?: string;
+  address?: string;
+}
+
+export type PaymentMethod =
+  | 'CASH'
+  | 'PIX'
+  | 'CREDIT_CARD'
+  | 'DEBIT_CARD'
+  | 'MEAL_VOUCHER'
+  | 'FOOD_VOUCHER'

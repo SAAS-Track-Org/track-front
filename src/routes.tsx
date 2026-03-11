@@ -6,6 +6,7 @@ import { LoginPage } from "@/pages/login/LoginPage";
 import { DashboardPage } from "@/pages/dashboard/DashboardPage";
 import { CreateDeliveryPage } from "@/pages/create-delivery/CreateDeliveryPage";
 import { DeliveryDetailsPage } from "@/pages/delivery-details-page/DeliveryDetailsPage";
+import { PrivateRoute } from "./PrivateRoute";
 
 export function AppRoutes() {
   return (
@@ -20,12 +21,14 @@ export function AppRoutes() {
         <Route path="/track/:publicCodeClient/:orderCode"           element={<TrackPage />} />
         <Route path="/navegacao/track/:publicCodeClient/:orderCode" element={<NavigationPage />} />
         <Route path="/driver/:publicCodeDeliveryman"                element={<DriverPage />} />
+        <Route path="/login"                                        element={<LoginPage />} />
 
-        {/* Autenticado */}
-        <Route path="/login"                          element={<LoginPage />} />
-        <Route path="/dashboard"                      element={<DashboardPage />} />
-        <Route path="/dashboard/new"                  element={<CreateDeliveryPage />} />
-        <Route path="/dashboard/delivery/:deliveryId" element={<DeliveryDetailsPage />} />
+        {/* Autenticado — exige token válido */}
+        <Route element={<PrivateRoute />}>
+          <Route path="/dashboard"                      element={<DashboardPage />} />
+          <Route path="/dashboard/new"                  element={<CreateDeliveryPage />} />
+          <Route path="/dashboard/delivery/:deliveryId" element={<DeliveryDetailsPage />} />
+        </Route>
 
         {/* Fallback */}
         <Route path="*" element={<Navigate to="/login" replace />} />
