@@ -2,13 +2,13 @@ import { useEffect, useState } from 'react'
 import { geocodeService } from '@/services/api/geocode.service'
 import type { GeocodeAddress, GeocodeCoordinates } from '@/services/api/geocode.service'
 
-interface UseGeocodeResult {
+interface UseGeocodesResult {
   coords: GeocodeCoordinates | null
   loading: boolean
   error: string | null
 }
 
-export function useGeocode(address: GeocodeAddress | null | undefined): UseGeocodeResult {
+export function useGeocodes(address: GeocodeAddress | null | undefined): UseGeocodesResult {
   const [coords, setCoords]   = useState<GeocodeCoordinates | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError]     = useState<string | null>(null)
