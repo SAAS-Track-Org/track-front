@@ -4,13 +4,13 @@ import {
   DeliveryStatus,
 } from "./enum.types";
 
-import { AddressDetail } from "./types";
+import { Address } from "./types";
 
 export interface DriverOrderDetail {
   orderCode: string;
   clientName: string | null;
   clientPhone: string | null;
-  address: AddressDetail | null;
+  address: Address | null;
   deliveryStatus: OrderDeliveryStatus;
   notes: string | null;
   totalAmount: number | null;

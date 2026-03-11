@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { deliveryService } from '@/services/api/delivery.service'
-import type { DeliverySummary } from '@/types/types'
+import type { DeliverySummary } from '@/types/delivery.types'
 
 interface UseDashboardDeliveriesResult {
   deliveries: DeliverySummary[]

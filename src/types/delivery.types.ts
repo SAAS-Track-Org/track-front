@@ -1,11 +1,11 @@
-import { UUID } from "node:crypto";
+import { Address, OrderResponse } from "@/types/types";
+
 import {
   OrderDeliveryStatus,
   PaymentMethod,
   OrderStatus,
   DeliveryStatus,
 } from "./enum.types";
-import { AddressDetail } from "./types";
 
 export interface OrderDetail {
   code: string;
@@ -16,7 +16,7 @@ export interface OrderDetail {
   notes: string | null;
   totalAmount: number | null;
   paymentMethod: PaymentMethod | null;
-  address: AddressDetail | null;
+  address: Address | null;
 }
 
 export interface DeliveryDetailResponse {
@@ -36,7 +36,7 @@ export interface UpdateOrderRequest {
   notes: string | null;
   totalAmount: number | null;
   paymentMethod: PaymentMethod | null;
-  address: AddressDetail | null;
+  address: Address | null;
 }
 
 export interface DeliveryDetailsPageResult {
@@ -68,4 +68,49 @@ export interface StandbyOrderSummary {
 export interface UpdateDeliverymanRequest {
   name: string | null;
   phoneNumber: string | null;
+}
+
+export interface CreateDeliveryResponse {
+  deliveryId: string;
+  publicCodeClient: string;
+  publicCodeDeliveryman: string;
+  status: DeliveryStatus;
+  orders: {
+    code: string;
+    clientName: string;
+    status: OrderStatus;
+    address: Address | null;
+  }[];
+}
+
+// ─── API Response — Dashboard List ───────────────────────────────────────────
+
+export interface DeliveryOrderSummary {
+  code: string;
+  stausAddress: OrderStatus;
+}
+
+export interface DeliverySummary {
+  deliveryId: string;
+  status: DeliveryStatus;
+  orders: DeliveryOrderSummary[];
+  clientName: string;
+  deliverymanName: string;
+  createdAt: string;
+}
+
+export interface TrackDeliveryResponse {
+  deliveryId: string;
+  publicCodeClient: string;
+  status: DeliveryStatus;
+  currentLat: number | null;
+  currentLng: number | null;
+  orders: OrderResponse[];
+}
+
+export interface DeliverymanSearchResult {
+  id: string;
+  dataClient: string;
+  name: string;
+  phoneNumber: string;
 }

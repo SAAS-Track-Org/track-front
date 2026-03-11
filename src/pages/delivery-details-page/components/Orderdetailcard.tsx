@@ -5,7 +5,7 @@ import { Input, TextArea } from "@/components/ui/Input";
 import { ConfirmDeleteModal } from "./Confirmdeletemodal";
 import { AddressForm } from "@/components/ui/form/AddressForm";
 import { PaymentMethodSelector } from "@/components/ui/form/PaymentMethodSelect";
-import type { AddressDetail } from "@/types/types";
+import type { Address } from "@/types/types";
 import type { OrderDetail, UpdateOrderRequest } from "@/types/delivery.types";
 import type { OrderDeliveryStatus, PaymentMethod } from "@/types/enum.types";
 import styles from "./Orderdetailcard.module.css";
@@ -30,9 +30,16 @@ const FALLBACK_STATUS = { label: "Desconhecido", color: "var(--text-muted)" };
 const formatCurrency = (value: number) =>
   value.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 
-const EMPTY_ADDRESS: AddressDetail = {
-  street: "", number: "", complement: "",
-  neighborhood: "", city: "", state: "", zipCode: "", country: "Brasil",
+const EMPTY_ADDRESS: Address = {
+  id: "",
+  street: "",
+  number: "",
+  complement: "",
+  neighborhood: "",
+  city: "",
+  state: "",
+  zipCode: "",
+  country: "Brasil"
 };
 
 interface Props {
@@ -62,7 +69,7 @@ export function OrderDetailCard({
   );
   const [paymentMethod, setPaymentMethod]           = useState<PaymentMethod | null>(order.paymentMethod ?? null);
   const [savedPaymentMethod, setSavedPaymentMethod] = useState<PaymentMethod | null>(order.paymentMethod ?? null);
-  const [address, setAddress]     = useState<AddressDetail>(order.address ?? EMPTY_ADDRESS);
+  const [address, setAddress]     = useState<Address>(order.address ?? EMPTY_ADDRESS);
   const [clientName, setClientName]   = useState(order.clientName || "");
   const [clientPhone, setClientPhone] = useState(order.clientPhone || "");
   const [addressError, setAddressError] = useState<string | null>(null);

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { deliveryService } from '@/services/api/delivery.service'
-import type { CreateDeliveryResponse } from '@/types/types'
+import type { CreateDeliveryResponse } from '@/types/delivery.types'
 
 interface UseCreateDeliveryResult {
   response: CreateDeliveryResponse | null
