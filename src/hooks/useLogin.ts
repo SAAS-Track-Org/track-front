@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { loginService } from '@/services/api/login.service'
-import type { LoginRequest } from '@/types/login.types'
+import { authService } from '@/services/api/login.service'
+import type { LoginRequest, AuthConfigResponse } from '@/types/login.types'
 
 interface UseLoginResult {
   sessionHours: number | null
@@ -17,12 +17,11 @@ export function useLogin(): UseLoginResult {
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  // Busca o tempo de sessão ao montar — lê do header X-Session-Duration-Hours
   useEffect(() => {
-    loginService
-      .getConfig()
-      .then((config) => setSessionHours(config.sessionDurationHours))
-      .catch(() => setSessionHours(8)) // fallback seguro
+    authService
+      .config()
+      .then((config: AuthConfigResponse) => setSessionHours(config.sessionDurationHours))
+      .catch(() => setSessionHours(8))
   }, [])
 
   async function handleLogin(payload: LoginRequest): Promise<void> {
@@ -30,7 +29,7 @@ export function useLogin(): UseLoginResult {
     setError(null)
 
     try {
-      const { token } = await loginService.login(payload)
+      const { token } = await authService.login(payload)
       localStorage.setItem('token', token)
       navigate('/dashboard')
     } catch {

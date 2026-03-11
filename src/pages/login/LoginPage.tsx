@@ -1,20 +1,17 @@
 import { useState } from "react";
 import styles from "./Loginpage.module.css";
-import { PaymentMethodSelector } from "@/components/ui/form/PaymentMethodSelect";
-import type { PaymentMethod } from "@/types";
 import { useLogin } from "@/hooks/useLogin";
 
 export function LoginPage() {
   const [email, setEmail] = useState("");
-  const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([]);
 
   const { sessionHours, submitting, error, handleLogin } = useLogin();
 
-  const isValid = email.trim().length > 0 && paymentMethods.length > 0;
+  const isValid = email.trim().length > 0;
 
   function handleSubmit() {
     if (!isValid) return;
-    handleLogin({ email: email.trim(), paymentMethods });
+    handleLogin({ email: email.trim() });
   }
 
   return (
@@ -28,7 +25,13 @@ export function LoginPage() {
         <div className={styles.brand}>
           <div className={styles.brandIcon}>
             <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
-              <circle cx="13" cy="13" r="12" stroke="currentColor" strokeWidth="1.8" />
+              <circle
+                cx="13"
+                cy="13"
+                r="12"
+                stroke="currentColor"
+                strokeWidth="1.8"
+              />
               <path
                 d="M7 13 L11 9 L15 15 L19 11"
                 stroke="currentColor"
@@ -45,9 +48,7 @@ export function LoginPage() {
         {/* Headline */}
         <div className={styles.headline}>
           <h1 className={styles.title}>Acesse o sistema</h1>
-          <p className={styles.subtitle}>
-            Informe seu e-mail e as formas de pagamento que você aceita para entrar.
-          </p>
+          <p className={styles.subtitle}>Informe seu e-mail para entrar.</p>
         </div>
 
         {/* Form */}
@@ -57,9 +58,28 @@ export function LoginPage() {
               E-mail
             </label>
             <div className={styles.inputWrapper}>
-              <svg className={styles.inputIcon} width="15" height="15" viewBox="0 0 15 15" fill="none">
-                <rect x="1" y="2.5" width="13" height="10" rx="2" stroke="currentColor" strokeWidth="1.4" />
-                <path d="M1 5L7.5 9L14 5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+              <svg
+                className={styles.inputIcon}
+                width="15"
+                height="15"
+                viewBox="0 0 15 15"
+                fill="none"
+              >
+                <rect
+                  x="1"
+                  y="2.5"
+                  width="13"
+                  height="10"
+                  rx="2"
+                  stroke="currentColor"
+                  strokeWidth="1.4"
+                />
+                <path
+                  d="M1 5L7.5 9L14 5"
+                  stroke="currentColor"
+                  strokeWidth="1.4"
+                  strokeLinecap="round"
+                />
               </svg>
               <input
                 id="email"
@@ -68,28 +88,28 @@ export function LoginPage() {
                 placeholder="seu@email.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
                 autoComplete="email"
               />
             </div>
           </div>
 
-          <div className={styles.fieldGroup}>
-            <label className={styles.label}>Formas de pagamento aceitas</label>
-            <p className={styles.fieldHint}>
-              Selecione todas as que você aceita nos seus pedidos
-            </p>
-            <PaymentMethodSelector
-              mode="multi"
-              value={paymentMethods}
-              onChange={setPaymentMethods}
-            />
-          </div>
-
           {error && (
             <div className={styles.errorBanner}>
               <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                <circle cx="7" cy="7" r="6" stroke="currentColor" strokeWidth="1.4" />
-                <path d="M7 4v3.5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+                <circle
+                  cx="7"
+                  cy="7"
+                  r="6"
+                  stroke="currentColor"
+                  strokeWidth="1.4"
+                />
+                <path
+                  d="M7 4v3.5"
+                  stroke="currentColor"
+                  strokeWidth="1.4"
+                  strokeLinecap="round"
+                />
                 <circle cx="7" cy="10" r="0.8" fill="currentColor" />
               </svg>
               {error}
@@ -107,7 +127,13 @@ export function LoginPage() {
               <>
                 Entrar
                 <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
-                  <path d="M3 7.5h9M8.5 4l3.5 3.5L8.5 11" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                  <path
+                    d="M3 7.5h9M8.5 4l3.5 3.5L8.5 11"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
                 </svg>
               </>
             )}
@@ -117,14 +143,26 @@ export function LoginPage() {
         {/* Session info */}
         <div className={styles.sessionInfo}>
           <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
-            <circle cx="6.5" cy="6.5" r="5.5" stroke="currentColor" strokeWidth="1.3" />
-            <path d="M6.5 3.5v3l2 1.5" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
+            <circle
+              cx="6.5"
+              cy="6.5"
+              r="5.5"
+              stroke="currentColor"
+              strokeWidth="1.3"
+            />
+            <path
+              d="M6.5 3.5v3l2 1.5"
+              stroke="currentColor"
+              strokeWidth="1.3"
+              strokeLinecap="round"
+            />
           </svg>
           {sessionHours === null ? (
             <span className={styles.sessionSkeleton} />
           ) : (
             <>
-              Sessão ativa por <strong>{sessionHours} horas</strong> após o acesso
+              Sessão ativa por <strong>{sessionHours} horas</strong> após o
+              acesso
             </>
           )}
         </div>
