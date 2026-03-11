@@ -5,12 +5,13 @@ import { AddressForm } from "@/components/ui/form/AddressForm";
 import { PaymentMethodSelector } from "@/components/ui/form/PaymentMethodSelect";
 import { PAYMENT_METHODS } from "@/components/ui/form/Paymentmethods";
 import { EMPTY_ADDRESS } from "@/components/ui/form/AddressForm";
-import type { AddressDetail, PaymentMethod } from "@/types/types";
+import type { Address } from "@/types/types";
+import type { PaymentMethod } from "@/types/enum.types";
 import styles from "./Trackpage.module.css";
 
 const ORDER_DELIVERY_STATUS_CONFIG: Record<
   string,
-  { label: string; color: string;}
+  { label: string; color: string }
 > = {
   WAITING: { label: "Aguardando", color: "var(--yellow)" },
   ON_THE_WAY: { label: "A caminho", color: "var(--blue)" },
@@ -37,7 +38,7 @@ export function TrackPage() {
   );
 
   const [editing, setEditing] = useState(false);
-  const [address, setAddress] = useState<AddressDetail>(EMPTY_ADDRESS);
+  const [address, setAddress] = useState<Address>(EMPTY_ADDRESS);
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod | null>(
     null,
   );
@@ -104,7 +105,7 @@ export function TrackPage() {
 
   const statusCfg = ORDER_DELIVERY_STATUS_CONFIG[order.deliveryStatus] ?? {
     label: order.deliveryStatus,
-    color: "var(--text-muted)"
+    color: "var(--text-muted)",
   };
 
   return (

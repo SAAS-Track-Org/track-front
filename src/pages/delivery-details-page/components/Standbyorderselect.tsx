@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { deliveryService } from '@/services/api/delivery.service'
-import type { StandbyOrderSummary } from '@/types/types'
+import type { StandbyOrderSummary } from '@/types/delivery.types'
 import styles from './Standbyorderselect.module.css'
 
 interface Props {
