@@ -1,5 +1,6 @@
 import {
   OrderDeliveryStatus,
+  AddressStatus,
   PaymentMethod,
   DeliveryStatus,
 } from "./enum.types";
@@ -12,6 +13,7 @@ export interface DriverOrderDetail {
   clientPhone: string | null;
   address: Address | null;
   deliveryStatus: OrderDeliveryStatus;
+  addressStatus: AddressStatus;
   notes: string | null;
   totalAmount: number | null;
   paymentMethod: PaymentMethod | null;
