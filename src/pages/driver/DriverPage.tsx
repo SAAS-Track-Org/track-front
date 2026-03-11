@@ -257,6 +257,7 @@ export function DriverPage() {
     lat: number;
     lng: number;
   } | null>(null);
+  
 
   const handleStart = () => {
     navigator.geolocation.getCurrentPosition(
