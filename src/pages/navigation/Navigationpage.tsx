@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useNavigationTracking } from '@/hooks/useNavigationTracking'
+import { useGeocode } from '@/hooks/Usegeocode'
 import styles from './Navigationpage.module.css'
 
 declare const L: any
@@ -14,6 +15,8 @@ export function NavigationPage() {
 
   const { order, delivererLocation, loading, guard } =
     useNavigationTracking(publicCodeClient!, orderCode!)
+
+  const { coords: destCoords } = useGeocode(order?.address ?? null)
 
   const mapRef        = useRef<any>(null)
   const markerRef     = useRef<any>(null)
@@ -35,7 +38,6 @@ export function NavigationPage() {
 
     L.control.zoom({ position: 'bottomright' }).addTo(mapRef.current)
 
-    // ResizeObserver garante invalidateSize quando container ganha tamanho
     const ro = new ResizeObserver(() => {
       mapRef.current?.invalidateSize()
     })
@@ -46,38 +48,26 @@ export function NavigationPage() {
       mapRef.current?.remove()
       mapRef.current = null
     }
-  }, []) // <- sem deps: roda uma única vez no mount
+  }, [])
 
-  // ── Marca destino via geocodificação ──
+  // ── Marca destino quando coords chegarem ──
   useEffect(() => {
-    if (!mapRef.current || !order?.address) return
+    if (!mapRef.current || !destCoords) return
 
-    const { street, number, city, state } = order.address
-    const query = encodeURIComponent(`${street} ${number}, ${city}, ${state}, Brasil`)
+    const destIcon = L.divIcon({
+      className: '',
+      html: `<div class="${styles.destMarker}">🏠</div>`,
+      iconSize: [36, 36],
+      iconAnchor: [18, 18],
+    })
 
-    fetch(`https://nominatim.openstreetmap.org/search?q=${query}&format=json&limit=1`)
-      .then(r => r.json())
-      .then(([result]) => {
-        if (!result) return
-        const lat = parseFloat(result.lat)
-        const lng = parseFloat(result.lon)
-
-        const destIcon = L.divIcon({
-          className: '',
-          html: `<div class="${styles.destMarker}">🏠</div>`,
-          iconSize: [36, 36],
-          iconAnchor: [18, 18],
-        })
-
-        if (destMarkerRef.current) {
-          destMarkerRef.current.setLatLng([lat, lng])
-        } else {
-          destMarkerRef.current = L.marker([lat, lng], { icon: destIcon })
-            .addTo(mapRef.current)
-        }
-      })
-      .catch(() => {})
-  }, [order?.address])
+    if (destMarkerRef.current) {
+      destMarkerRef.current.setLatLng([destCoords.lat, destCoords.lng])
+    } else {
+      destMarkerRef.current = L.marker([destCoords.lat, destCoords.lng], { icon: destIcon })
+        .addTo(mapRef.current)
+    }
+  }, [destCoords])
 
   // ── Atualiza marker do entregador ──
   useEffect(() => {
@@ -138,14 +128,11 @@ export function NavigationPage() {
     ? `${addr.street}, ${addr.number}${addr.complement ? ` — ${addr.complement}` : ''}`
     : 'Seu endereço'
 
-  // ── O mapa SEMPRE está no DOM — loading sobrepõe via CSS ──
   return (
     <div className={styles.page}>
 
-      {/* Mapa sempre montado */}
       <div ref={mapElRef} className={styles.map} />
 
-      {/* Loading overlay — some quando loading=false */}
       {loading && (
         <div className={styles.loadingOverlay}>
           <span className={styles.loadingSpinner} />
@@ -153,7 +140,6 @@ export function NavigationPage() {
         </div>
       )}
 
-      {/* Conteúdo — só aparece após loading */}
       {!loading && (
         <>
           <header className={styles.header}>

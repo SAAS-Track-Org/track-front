@@ -5,7 +5,7 @@ import type { LocationUpdate } from '@/types'
 
 type LocationCallback = (location: LocationUpdate) => void
 
-const WS_BASE = import.meta.env.VITE_WS_URL || 'wss://traccks.duckdns.org/api/v1/ws'
+const WS_BASE = import.meta.env.VITE_WS_URL || 'ws://localhost:8080/api/v1/ws'
 
 class WebSocketService {
   private client: Client | null = null

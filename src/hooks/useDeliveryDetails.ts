@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { deliveryService } from '@/services/api/delivery.service'
 import type {
   DeliveryDetailResponse,
@@ -11,6 +11,7 @@ interface UseDeliveryDetailsResult {
   delivery: DeliveryDetailResponse | null
   loading: boolean
   error: string | null
+  refetch: () => void
   addOrder: () => Promise<void>
   updateOrder: (orderCode: string, payload: UpdateOrderRequest) => Promise<void>
   updateOrderStatus: (orderCode: string, status: OrderDeliveryStatus) => Promise<void>
@@ -19,6 +20,7 @@ interface UseDeliveryDetailsResult {
   savingOrder: string | null
   savingDeliveryman: boolean
 }
+
 export function useDeliveryDetails(deliveryId: string): UseDeliveryDetailsResult {
   const [delivery, setDelivery] = useState<DeliveryDetailResponse | null>(null)
   const [loading, setLoading] = useState(true)
@@ -26,7 +28,7 @@ export function useDeliveryDetails(deliveryId: string): UseDeliveryDetailsResult
   const [savingOrder, setSavingOrder] = useState<string | null>(null)
   const [savingDeliveryman, setSavingDeliveryman] = useState(false)
 
-  useEffect(() => {
+  const fetch = useCallback(() => {
     setLoading(true)
     deliveryService
       .detail(deliveryId)
@@ -34,6 +36,10 @@ export function useDeliveryDetails(deliveryId: string): UseDeliveryDetailsResult
       .catch(() => setError('Entrega não encontrada'))
       .finally(() => setLoading(false))
   }, [deliveryId])
+
+  useEffect(() => {
+    fetch()
+  }, [fetch])
 
   const addOrder = async () => {
     const newOrder = await deliveryService.addOrder(deliveryId)
@@ -108,7 +114,7 @@ export function useDeliveryDetails(deliveryId: string): UseDeliveryDetailsResult
   }
 
   return {
-    delivery, loading, error,
+    delivery, loading, error, refetch: fetch,
     addOrder, updateOrder, updateOrderStatus, linkStandbyOrder, updateDeliveryman,
     savingOrder, savingDeliveryman,
   }
