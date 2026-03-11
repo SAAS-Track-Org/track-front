@@ -261,6 +261,11 @@
   color: var(--text);
 }
 
+.clientSection{
+  display: flex;
+  gap: 0.75rem;
+}
+
 /* ── Form card ── */
 .formCard {
   background: var(--surface);

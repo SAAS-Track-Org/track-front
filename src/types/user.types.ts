@@ -1,5 +1,8 @@
 // --- Request ---
 
+import { UUID } from "crypto";
+import { PaymentMethod } from "./enum.types";
+
 export interface LoginRequest {
   email: string;
 }
@@ -32,10 +35,19 @@ export interface ProfileResponse {
   address?: string;
 }
 
-export type PaymentMethod =
-  | 'CASH'
-  | 'PIX'
-  | 'CREDIT_CARD'
-  | 'DEBIT_CARD'
-  | 'MEAL_VOUCHER'
-  | 'FOOD_VOUCHER'
+export interface UserInfo {
+  id: UUID;
+  methods: PaymentMethod[];
+}
+
+export interface LoginRequest {
+  email: string
+}
+
+export interface AuthUser {
+  id: string;
+  name: string;
+  email: string;
+  role: "RESTAURANT" | "DELIVERYMAN";
+  token: string;
+}

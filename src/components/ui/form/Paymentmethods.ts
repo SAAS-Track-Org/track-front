@@ -1,4 +1,4 @@
-import type { PaymentMethod } from "@/types";
+import type { PaymentMethod } from "@/types/enum.types";
 
 export const PAYMENT_METHODS: { id: PaymentMethod; label: string; icon: string }[] = [
   { id: "CASH",         label: "Dinheiro",        icon: "💵" },

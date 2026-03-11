@@ -1,5 +1,5 @@
 import { PAYMENT_METHODS } from "./Paymentmethods"
-import type { PaymentMethod } from "@/types";
+import type { PaymentMethod } from "@/types/enum.types";
 import styles from "./Paymentmethodselector.module.css";
 
 // ── Modo único (comportamento original) ──────────────────────────────────────
@@ -8,6 +8,7 @@ interface SingleProps {
   value: PaymentMethod | null;
   savedValue?: PaymentMethod | null;
   onChange: (method: PaymentMethod) => void;
+  availableMethods?: PaymentMethod[];
 }
 
 // ── Modo múltiplo ─────────────────────────────────────────────────────────────
@@ -16,12 +17,24 @@ interface MultiProps {
   value: PaymentMethod[];
   savedValue?: PaymentMethod[];
   onChange: (methods: PaymentMethod[]) => void;
+  availableMethods?: PaymentMethod[];
 }
 
 type PaymentMethodSelectorProps = SingleProps | MultiProps;
 
 export function PaymentMethodSelector(props: PaymentMethodSelectorProps) {
   const isMulti = props.mode === "multi";
+
+  // Modo multi (tela de configurações): sempre mostra todos os métodos
+  // Modo single (pedido): mostra só os métodos aceitos pelo estabelecimento
+  //   → se availableMethods não vier ou vier vazio, não renderiza nada
+  const visibleMethods = isMulti
+    ? PAYMENT_METHODS
+    : props.availableMethods && props.availableMethods.length > 0
+      ? PAYMENT_METHODS.filter((m) => (props as SingleProps).availableMethods!.includes(m.id))
+      : [];
+
+  if (!isMulti && visibleMethods.length === 0) return null;
 
   function handleClick(id: PaymentMethod) {
     if (isMulti) {
@@ -55,7 +68,7 @@ export function PaymentMethodSelector(props: PaymentMethodSelectorProps) {
 
   return (
     <div className={styles.paymentGrid}>
-      {PAYMENT_METHODS.map((m) => {
+      {visibleMethods.map((m) => {
         const { isSelected, isSaved, isSelectedSaved, isChanging } = getStates(m.id);
 
         return (

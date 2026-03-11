@@ -5,7 +5,7 @@ import type {
   AuthConfigResponse,
   UpdateProfileRequest,
   ProfileResponse,
-} from '@/types/login.types'
+} from '@/types/user.types'
 
 export const authService = {
   // Busca configurações públicas (duração de sessão)

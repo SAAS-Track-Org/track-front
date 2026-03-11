@@ -4,7 +4,7 @@ import { useDriverDelivery } from "@/hooks/useDriverDelivery";
 import { useProfile } from "@/hooks/useProfile";
 import { DeliveryCard } from "../driver/components/DeliveryCard";
 import { PaymentMethodSelector } from "@/components/ui/form/PaymentMethodSelect";
-import type { PaymentMethod } from "@/types";
+import type { PaymentMethod } from "@/types/enum.types";
 import styles from "./DashboardPage.module.css";
 
 // ── Settings Modal ────────────────────────────────────────────────────────────
@@ -45,7 +45,6 @@ function SettingsModal({
     await save();
   }
 
-  // Fecha o modal e a página já reage porque o estado é o mesmo
   useEffect(() => {
     if (saved) {
       const t = setTimeout(onClose, 600);

@@ -1,7 +1,7 @@
 /// <reference types="vite/client" />
 
 import { Client } from '@stomp/stompjs'
-import type { LocationUpdate } from '@/types'
+import type { LocationUpdate } from '@/types/types'
 
 type LocationCallback = (location: LocationUpdate) => void
 

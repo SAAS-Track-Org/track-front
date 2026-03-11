@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
 import { trackService } from '@/services/api/track.service'
 import { wsService } from '@/services/websocket/wsService'
-import type { TrackOrderResponse } from '@/services/api/track.service'
-import type { LocationUpdate } from '@/types'
+import type { TrackOrderResponse } from '@/types/orders.types'
+import type { LocationUpdate } from '@/types/types'
 
 interface UseNavigationTrackingResult {
   order: TrackOrderResponse | null

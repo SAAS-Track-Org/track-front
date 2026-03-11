@@ -5,18 +5,21 @@ import { AddressForm } from "@/components/ui/form/AddressForm";
 import { PaymentMethodSelector } from "@/components/ui/form/PaymentMethodSelect";
 import { PAYMENT_METHODS } from "@/components/ui/form/Paymentmethods";
 import { EMPTY_ADDRESS } from "@/components/ui/form/AddressForm";
-import type { AddressDetail, PaymentMethod } from "@/types";
+import { Field } from "@/components/ui/Field";
+import { Input } from "@/components/ui/Input";
+import type { Address } from "@/types/types";
+import type { PaymentMethod } from "@/types/enum.types";
 import styles from "./Trackpage.module.css";
 
 const ORDER_DELIVERY_STATUS_CONFIG: Record<
   string,
-  { label: string; color: string;}
+  { label: string; color: string }
 > = {
-  WAITING: { label: "Aguardando", color: "var(--yellow)" },
-  ON_THE_WAY: { label: "A caminho", color: "var(--blue)" },
-  ARRIVING: { label: "Chegando", color: "var(--orange)" },
-  DELIVERED: { label: "Entregue", color: "var(--green)" },
-  CANCELLED: { label: "Cancelado", color: "var(--red)" },
+  WAITING:    { label: "Aguardando", color: "var(--yellow)" },
+  ON_THE_WAY: { label: "A caminho",  color: "var(--blue)"   },
+  ARRIVING:   { label: "Chegando",   color: "var(--orange)" },
+  DELIVERED:  { label: "Entregue",   color: "var(--green)"  },
+  CANCELLED:  { label: "Cancelado",  color: "var(--red)"    },
 };
 
 function getPaymentLabel(method: PaymentMethod | null): string {
@@ -36,49 +39,49 @@ export function TrackPage() {
     orderCode!,
   );
 
-  const [editing, setEditing] = useState(false);
-  const [address, setAddress] = useState<AddressDetail>(EMPTY_ADDRESS);
-  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod | null>(
-    null,
-  );
-  const [addressError, setAddressError] = useState<string | null>(null);
+  const [editing, setEditing]             = useState(false);
+  const [clientName, setClientName]       = useState("");
+  const [clientPhone, setClientPhone]     = useState("");
+  const [address, setAddress]             = useState<Address>(EMPTY_ADDRESS);
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod | null>(null);
+  const [addressError, setAddressError]   = useState<string | null>(null);
 
   const isConfirmed = order?.addressStatus === "ADDRESS_CONFIRMED";
-  const isArriving = order?.deliveryStatus === "ARRIVING";
+  const isArriving  = order?.deliveryStatus === "ARRIVING";
   const canEdit =
     order?.deliveryStatus !== "ARRIVING" &&
+    order?.deliveryStatus !== "ON_THE_WAY" &&
     order?.deliveryStatus !== "DELIVERED";
 
   function startEdit() {
-    if (order?.address) setAddress(order.address);
+    if (order?.clientName)    setClientName(order.clientName);
+    if (order?.clientPhone)   setClientPhone(order.clientPhone);
+    if (order?.address)       setAddress(order.address);
     if (order?.paymentMethod) setPaymentMethod(order.paymentMethod);
     setEditing(true);
   }
 
   function validateAddress(): boolean {
     if (!address.street.trim() && !address.number.trim()) {
-      setAddressError("Informe a rua e o número");
-      return false;
+      setAddressError("Informe a rua e o número"); return false;
     }
-    if (!address.street.trim()) {
-      setAddressError("Informe o nome da rua");
-      return false;
-    }
-    if (!address.number.trim()) {
-      setAddressError("Informe o número");
-      return false;
-    }
+    if (!address.street.trim()) { setAddressError("Informe o nome da rua"); return false; }
+    if (!address.number.trim()) { setAddressError("Informe o número");      return false; }
     return true;
   }
 
   async function handleSave() {
     if (!validateAddress()) return;
     setAddressError(null);
-    await saveClientData({ address, paymentMethod });
+    await saveClientData({
+      clientName:  clientName  || null,
+      clientPhone: clientPhone || null,
+      address,
+      paymentMethod,
+    });
     setEditing(false);
   }
 
-  // ── Loading ──
   if (loading) {
     return (
       <div className={styles.page}>
@@ -90,7 +93,6 @@ export function TrackPage() {
     );
   }
 
-  // ── Error ──
   if (error || !order) {
     return (
       <div className={styles.page}>
@@ -104,8 +106,10 @@ export function TrackPage() {
 
   const statusCfg = ORDER_DELIVERY_STATUS_CONFIG[order.deliveryStatus] ?? {
     label: order.deliveryStatus,
-    color: "var(--text-muted)"
+    color: "var(--text-muted)",
   };
+
+  const availableMethods = order.availablePaymentMethods ?? [];
 
   return (
     <div className={styles.page}>
@@ -124,10 +128,7 @@ export function TrackPage() {
           <div className={styles.statusRow}>
             <div className={styles.statusInfo}>
               <span className={styles.statusLabel}>Status do pedido</span>
-              <span
-                className={styles.statusValue}
-                style={{ color: statusCfg.color }}
-              >
+              <span className={styles.statusValue} style={{ color: statusCfg.color }}>
                 {statusCfg.label}
               </span>
             </div>
@@ -136,28 +137,29 @@ export function TrackPage() {
           {isArriving && (
             <button
               className={styles.btnNavigate}
-              onClick={() =>
-                navigate(`/navegacao/track/${publicCodeClient}/${orderCode}`)
-              }
+              onClick={() => navigate(`/navegacao/track/${publicCodeClient}/${orderCode}`)}
             >
               📍 Ver em tempo real
             </button>
           )}
         </div>
 
-        {/* ── Endereço confirmado (view) ── */}
+        {/* ── Dados confirmados (view) ── */}
         {isConfirmed && !editing && order.address && (
           <div className={styles.confirmedCard}>
             <div className={styles.confirmedTop}>
-              <span className={styles.confirmedBadge}>
-                ✓ Endereço confirmado
-              </span>
+              <span className={styles.confirmedBadge}>✓ Endereço confirmado</span>
               {canEdit && (
-                <button className={styles.btnEdit} onClick={startEdit}>
-                  Editar
-                </button>
+                <button className={styles.btnEdit} onClick={startEdit}>Editar</button>
               )}
             </div>
+
+            {order.clientName && (
+              <p className={styles.confirmedName}>{order.clientName}</p>
+            )}
+            {order.clientPhone && (
+              <p className={styles.confirmedPhone}>{order.clientPhone}</p>
+            )}
 
             <p className={styles.confirmedAddress}>
               {order.address.street}, {order.address.number}
@@ -165,8 +167,7 @@ export function TrackPage() {
             </p>
             {(order.address.neighborhood || order.address.city) && (
               <p className={styles.confirmedAddressSub}>
-                {order.address.neighborhood &&
-                  `${order.address.neighborhood}, `}
+                {order.address.neighborhood && `${order.address.neighborhood}, `}
                 {order.address.city}
                 {order.address.state ? ` — ${order.address.state}` : ""}
               </p>
@@ -188,9 +189,27 @@ export function TrackPage() {
           <div className={styles.formCard}>
             <p className={styles.formIntro}>
               {isConfirmed
-                ? "Atualize seu endereço de entrega abaixo."
-                : "Informe seu endereço para que o entregador possa te encontrar."}
+                ? "Atualize seus dados abaixo."
+                : "Informe seus dados para que o entregador possa te encontrar."}
             </p>
+
+            {/* Dados do cliente */}
+            <div className={styles.clientSection}>
+              <Field label="Seu nome">
+                <Input
+                  placeholder="Ex: João Silva"
+                  value={clientName}
+                  onChange={(e) => setClientName(e.target.value)}
+                />
+              </Field>
+              <Field label="Telefone">
+                <Input
+                  placeholder="(11) 99999-9999"
+                  value={clientPhone}
+                  onChange={(e) => setClientPhone(e.target.value)}
+                />
+              </Field>
+            </div>
 
             <AddressForm
               address={address}
@@ -199,16 +218,19 @@ export function TrackPage() {
               onClearError={() => setAddressError(null)}
             />
 
-            <div className={styles.paymentSection}>
-              <span className={styles.sectionLabel}>
-                Pagamento <span className={styles.optional}>opcional</span>
-              </span>
-              <PaymentMethodSelector
-                value={paymentMethod}
-                savedValue={order.paymentMethod}
-                onChange={setPaymentMethod}
-              />
-            </div>
+            {availableMethods.length > 0 && (
+              <div className={styles.paymentSection}>
+                <span className={styles.sectionLabel}>
+                  Pagamento <span className={styles.optional}>opcional</span>
+                </span>
+                <PaymentMethodSelector
+                  value={paymentMethod}
+                  savedValue={order.paymentMethod}
+                  onChange={setPaymentMethod}
+                  availableMethods={availableMethods}
+                />
+              </div>
+            )}
 
             <div className={styles.formActions}>
               {editing && (
@@ -226,11 +248,9 @@ export function TrackPage() {
                 disabled={saving}
               >
                 {saving ? (
-                  <>
-                    <span className={styles.spinner} /> Salvando...
-                  </>
+                  <><span className={styles.spinner} /> Salvando...</>
                 ) : isConfirmed ? (
-                  "Atualizar endereço"
+                  "Atualizar dados"
                 ) : (
                   "Confirmar endereço"
                 )}
