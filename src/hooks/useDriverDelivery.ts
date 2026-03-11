@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { deliveryService } from '@/services/api/delivery.service'
 import type { DeliverySummary } from '@/types'
 
@@ -6,6 +6,7 @@ interface UseDashboardDeliveriesResult {
   deliveries: DeliverySummary[]
   loading: boolean
   error: string | null
+  refetch: () => void
 }
 
 export function useDriverDelivery(): UseDashboardDeliveriesResult {
@@ -13,7 +14,7 @@ export function useDriverDelivery(): UseDashboardDeliveriesResult {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
-  useEffect(() => {
+  const fetch = useCallback(() => {
     setLoading(true)
     deliveryService
       .list()
@@ -25,5 +26,9 @@ export function useDriverDelivery(): UseDashboardDeliveriesResult {
       .finally(() => setLoading(false))
   }, [])
 
-  return { deliveries, loading, error }
+  useEffect(() => {
+    fetch()
+  }, [fetch])
+
+  return { deliveries, loading, error, refetch: fetch }
 }

@@ -3,6 +3,9 @@ import { authService } from '@/services/api/login.service'
 import type { PaymentMethod, UpdateProfileRequest } from '@/types/login.types'
 
 interface UseProfileResult {
+  // Estado salvo no servidor — usado para lógica da página
+  committedPaymentMethods: PaymentMethod[]
+  // Estado editável do formulário — usado pelo modal
   paymentMethods: PaymentMethod[]
   establishmentName: string
   address: string
@@ -17,20 +20,26 @@ interface UseProfileResult {
 }
 
 export function useProfile(): UseProfileResult {
+  // Estado confirmado (só atualiza após save bem-sucedido)
+  const [committedPaymentMethods, setCommittedPaymentMethods] = useState<PaymentMethod[]>([])
+
+  // Estado do formulário (atualiza a cada seleção)
   const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([])
   const [establishmentName, setEstablishmentName] = useState('')
   const [address, setAddress] = useState('')
+
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  // Carrega perfil atual ao montar
   useEffect(() => {
     authService
       .getProfile()
       .then((profile) => {
-        setPaymentMethods((profile.paymentMethods as PaymentMethod[]) ?? [])
+        const methods = (profile.paymentMethods as PaymentMethod[]) ?? []
+        setCommittedPaymentMethods(methods)
+        setPaymentMethods(methods)
         setEstablishmentName(profile.establishmentName ?? '')
         setAddress(profile.address ?? '')
       })
@@ -51,7 +60,11 @@ export function useProfile(): UseProfileResult {
         address: address.trim() || undefined,
       }
       const updated = await authService.updateProfile(payload)
-      setPaymentMethods((updated.paymentMethods as PaymentMethod[]) ?? [])
+      const methods = (updated.paymentMethods as PaymentMethod[]) ?? []
+
+      // Atualiza tanto o estado committed quanto o formulário
+      setCommittedPaymentMethods(methods)
+      setPaymentMethods(methods)
       setEstablishmentName(updated.establishmentName ?? '')
       setAddress(updated.address ?? '')
       setSaved(true)
@@ -63,6 +76,7 @@ export function useProfile(): UseProfileResult {
   }, [paymentMethods, establishmentName, address])
 
   return {
+    committedPaymentMethods,
     paymentMethods,
     establishmentName,
     address,

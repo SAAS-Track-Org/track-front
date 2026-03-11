@@ -77,7 +77,7 @@ export function NavigationPage() {
 
     const motoIcon = L.divIcon({
       className: '',
-      html: `<div class="${styles.motoMarker}">🛵</div>`,
+      html: `<div class="${styles.motoMarker}">📦</div>`,
       iconSize: [40, 40],
       iconAnchor: [20, 20],
     })
