@@ -1,7 +1,7 @@
 import { Field } from "@/components/ui/Field";
 import { Input } from "@/components/ui/Input";
 import { useCep } from "@/hooks/useCep";
-import type { AddressDetail } from "@/types";
+import type { AddressDetail } from "@/types/types";
 import styles from "./Addressform.module.css";
 
 export const EMPTY_ADDRESS: AddressDetail = {

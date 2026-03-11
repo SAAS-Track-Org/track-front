@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { deliveryService } from "@/services/api/delivery.service";
-import type { DriverDeliveryResponse, OrderDeliveryStatus } from "@/types";
+import type { OrderDeliveryStatus } from "@/types/enum.types";
+import type { DriverDeliveryResponse } from "@/types/driver.types";
 
 interface UseDriverDeliveryResult {
   delivery: DriverDeliveryResponse | null;
@@ -188,9 +189,15 @@ export function useDriverDelivery(
           ...prev,
           orders: prev.orders.map((o) => {
             if (o.orderCode === orderCode)
-              return { ...o, deliveryStatus: "DELIVERED" as OrderDeliveryStatus };
+              return {
+                ...o,
+                deliveryStatus: "DELIVERED" as OrderDeliveryStatus,
+              };
             if (o.orderCode === nextCode)
-              return { ...o, deliveryStatus: "ARRIVING" as OrderDeliveryStatus };
+              return {
+                ...o,
+                deliveryStatus: "ARRIVING" as OrderDeliveryStatus,
+              };
             return o;
           }),
         };

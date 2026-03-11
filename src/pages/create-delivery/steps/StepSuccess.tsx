@@ -1,5 +1,5 @@
 import { useState } from "react";
-import type { CreateDeliveryResponse, OrderDetail, OrderStatus } from "@/types";
+import type { CreateDeliveryResponse, OrderDetail, OrderStatus } from "@/types/types";
 import styles from "./StepSuccess.module.css";
 
 interface Props {

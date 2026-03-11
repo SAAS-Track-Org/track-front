@@ -1,19 +1,20 @@
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useDeliveryDetails } from "@/hooks/useDeliveryDetails";
+import { useProfile } from "@/hooks/useProfile";
 import { OrderDetailCard } from "./components/Orderdetailcard";
 import { StandbyOrderSelect } from "./components/Standbyorderselect";
-
 import { Input } from "@/components/ui/Input";
 import { Field } from "@/components/ui/Field";
 import styles from "./DeliveryDetailsPage.module.css";
-import { DeliveryStatus } from "@/types";
+import { DeliveryStatus } from "@/types/enum.types";
 
 const copyLink = (text: string) => navigator.clipboard.writeText(text);
 
 export function DeliveryDetailsPage() {
   const { deliveryId } = useParams<{ deliveryId: string }>();
   const navigate = useNavigate();
+
   const {
     delivery,
     loading,
@@ -27,22 +28,23 @@ export function DeliveryDetailsPage() {
     savingDeliveryman,
   } = useDeliveryDetails(deliveryId!);
 
+  // Métodos de pagamento do estabelecimento — já carregados, sem nova chamada à API
+  const { committedPaymentMethods } = useProfile();
+
   const DELIVERY_STATUS_CONFIG: Record<
     DeliveryStatus,
     { label: string; className: string }
   > = {
-    CREATED: { label: "Criado", className: styles.statusCreated },
-    IN_TRANSIT: { label: "Em trânsito", className: styles.statusInTransit },
-    DELIVERED: { label: "Entregue", className: styles.statusDelivered },
-    CANCELLED: { label: "Cancelado", className: styles.statusCancelled },
+    CREATED:    { label: "Criado",      className: styles.statusCreated    },
+    IN_TRANSIT: { label: "Em trânsito", className: styles.statusInTransit  },
+    DELIVERED:  { label: "Entregue",    className: styles.statusDelivered  },
+    CANCELLED:  { label: "Cancelado",   className: styles.statusCancelled  },
   };
 
-  // ── Estado local do entregador ──
-  const [driverName, setDriverName] = useState("");
-  const [driverPhone, setDriverPhone] = useState("");
+  const [driverName, setDriverName]             = useState("");
+  const [driverPhone, setDriverPhone]           = useState("");
   const [driverInitialized, setDriverInitialized] = useState(false);
 
-  // Inicializa os campos com os dados da API uma vez
   if (delivery && !driverInitialized) {
     setDriverName(delivery.deliverymanName ?? "");
     setDriverPhone(delivery.deliverymanPhone ?? "");
@@ -65,13 +67,8 @@ export function DeliveryDetailsPage() {
     return (
       <div className={styles.page}>
         <div className={styles.container}>
-          <div className={styles.error}>
-            ⚠ {error ?? "Entrega não encontrada"}
-          </div>
-          <button
-            className={styles.btnBack}
-            onClick={() => navigate("/dashboard")}
-          >
+          <div className={styles.error}>⚠ {error ?? "Entrega não encontrada"}</div>
+          <button className={styles.btnBack} onClick={() => navigate("/dashboard")}>
             ← Voltar
           </button>
         </div>
@@ -86,10 +83,7 @@ export function DeliveryDetailsPage() {
       <div className={styles.container}>
         {/* ── Header ── */}
         <div className={styles.header}>
-          <button
-            className={styles.btnBack}
-            onClick={() => navigate("/dashboard")}
-          >
+          <button className={styles.btnBack} onClick={() => navigate("/dashboard")}>
             ← Voltar
           </button>
           <div className={styles.headerInfo}>
@@ -111,10 +105,7 @@ export function DeliveryDetailsPage() {
             <span className={styles.linkLabel}>Link do entregador</span>
             <div className={styles.driverLinkValue}>
               <span className={styles.linkValue}>{driverLink}</span>
-              <button
-                className={styles.btnCopy}
-                onClick={() => copyLink(driverLink)}
-              >
+              <button className={styles.btnCopy} onClick={() => copyLink(driverLink)}>
                 Copiar
               </button>
             </div>
@@ -140,21 +131,10 @@ export function DeliveryDetailsPage() {
           <div className={styles.driverFooter}>
             <button
               className={styles.btnSaveDriver}
-              onClick={() =>
-                updateDeliveryman({
-                  name: driverName || null,
-                  phoneNumber: driverPhone || null,
-                })
-              }
+              onClick={() => updateDeliveryman({ name: driverName || null, phoneNumber: driverPhone || null })}
               disabled={savingDeliveryman}
             >
-              {savingDeliveryman ? (
-                <>
-                  <span className={styles.spinner} /> Salvando...
-                </>
-              ) : (
-                "Salvar entregador"
-              )}
+              {savingDeliveryman ? <><span className={styles.spinner} /> Salvando...</> : "Salvar entregador"}
             </button>
           </div>
         </div>
@@ -187,11 +167,10 @@ export function DeliveryDetailsPage() {
                 order={order}
                 publicCodeClient={delivery.publicCodeClient}
                 saving={savingOrder === order.code}
+                availablePaymentMethods={committedPaymentMethods}
                 onSave={(payload) => updateOrder(order.code, payload)}
-                onStatusChange={(status) =>
-                  updateOrderStatus(order.code, status)
-                }
-                disableActions={delivery.status == "CREATED"}
+                onStatusChange={(status) => updateOrderStatus(order.code, status)}
+                disableActions={delivery.status === "CREATED"}
               />
             ))}
           </div>

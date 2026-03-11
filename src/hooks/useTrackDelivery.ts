@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { deliveryService } from '@/services/api/delivery.service'
 import { wsService } from '@/services/websocket/wsService'
-import type { TrackDeliveryResponse, LocationUpdate } from '@/types'
+import type { TrackDeliveryResponse, LocationUpdate } from '@/types/types'
 
 interface UseTrackDeliveryResult {
   delivery: TrackDeliveryResponse | null

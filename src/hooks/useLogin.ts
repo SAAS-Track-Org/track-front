@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { authService } from '@/services/api/login.service'
-import type { LoginRequest, AuthConfigResponse } from '@/types/login.types'
+import type { LoginRequest, AuthConfigResponse } from '@/types/user.types'
 
 interface UseLoginResult {
   sessionHours: number | null

@@ -5,7 +5,7 @@ import { AddressForm } from "@/components/ui/form/AddressForm";
 import { PaymentMethodSelector } from "@/components/ui/form/PaymentMethodSelect";
 import { PAYMENT_METHODS } from "@/components/ui/form/Paymentmethods";
 import { EMPTY_ADDRESS } from "@/components/ui/form/AddressForm";
-import type { AddressDetail, PaymentMethod } from "@/types";
+import type { AddressDetail, PaymentMethod } from "@/types/types";
 import styles from "./Trackpage.module.css";
 
 const ORDER_DELIVERY_STATUS_CONFIG: Record<

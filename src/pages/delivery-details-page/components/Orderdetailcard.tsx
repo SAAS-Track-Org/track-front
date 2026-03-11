@@ -5,13 +5,9 @@ import { Input, TextArea } from "@/components/ui/Input";
 import { ConfirmDeleteModal } from "./Confirmdeletemodal";
 import { AddressForm } from "@/components/ui/form/AddressForm";
 import { PaymentMethodSelector } from "@/components/ui/form/PaymentMethodSelect";
-import type {
-  OrderDetail,
-  UpdateOrderRequest,
-  PaymentMethod,
-  AddressDetail,
-  OrderDeliveryStatus,
-} from "@/types";
+import type { AddressDetail } from "@/types/types";
+import type { OrderDetail, UpdateOrderRequest } from "@/types/delivery.types";
+import type { OrderDeliveryStatus, PaymentMethod } from "@/types/enum.types";
 import styles from "./Orderdetailcard.module.css";
 
 const DELIVERY_STATUS_CONFIG: Record<string, { label: string; color: string }> = {
@@ -43,6 +39,7 @@ interface Props {
   order: OrderDetail;
   publicCodeClient: string;
   saving: boolean;
+  availablePaymentMethods: PaymentMethod[];
   onSave: (payload: UpdateOrderRequest) => Promise<void>;
   onStatusChange: (status: OrderDeliveryStatus) => Promise<void>;
   disableActions?: boolean;
@@ -52,6 +49,7 @@ export function OrderDetailCard({
   order,
   publicCodeClient,
   saving,
+  availablePaymentMethods,
   onSave,
   onStatusChange,
   disableActions,
@@ -60,7 +58,7 @@ export function OrderDetailCard({
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [notes, setNotes]                 = useState(order.notes ?? "");
   const [totalAmount, setTotalAmount]     = useState(
-    order.totalAmount != null ? String(order.totalAmount) : ""
+    order.totalAmount != null ? String(order.totalAmount) : "",
   );
   const [paymentMethod, setPaymentMethod]           = useState<PaymentMethod | null>(order.paymentMethod ?? null);
   const [savedPaymentMethod, setSavedPaymentMethod] = useState<PaymentMethod | null>(order.paymentMethod ?? null);
@@ -74,7 +72,7 @@ export function OrderDetailCard({
 
   const handleSave = async () => {
     const hasAnyAddressField = Object.entries(address).some(
-      ([key, val]) => key !== "country" && val.trim() !== ""
+      ([key, val]) => key !== "country" && val.trim() !== "",
     );
     if (hasAnyAddressField) {
       if (!address.street.trim() && !address.number.trim()) {
@@ -86,12 +84,12 @@ export function OrderDetailCard({
     setAddressError(null);
 
     await onSave({
-      clientName:    clientName || null,
-      clientPhone:   clientPhone || null,
-      notes:         notes || null,
-      totalAmount:   totalAmount ? parseFloat(totalAmount) : null,
+      clientName:  clientName  || null,
+      clientPhone: clientPhone || null,
+      notes:       notes       || null,
+      totalAmount: totalAmount ? parseFloat(totalAmount) : null,
       paymentMethod,
-      address:       address.street ? address : null,
+      address:     address.street ? address : null,
     });
 
     setSavedPaymentMethod(paymentMethod);
@@ -104,9 +102,8 @@ export function OrderDetailCard({
 
   return (
     <div className={styles.card} data-open={open}>
-
       {/* ── Header ── */}
-      <div className={styles.header} onClick={() => setOpen(v => !v)}>
+      <div className={styles.header} onClick={() => setOpen((v) => !v)}>
         <div className={styles.headerLeft}>
           <span className={styles.code}>#{order.code}</span>
           <span className={styles.clientName}>
@@ -137,14 +134,14 @@ export function OrderDetailCard({
       <div className={styles.actionBar} style={{ display: disableActions ? "flex" : "none" }}>
         <button
           className={styles.btnIconStandby}
-          onClick={e => { e.stopPropagation(); onStatusChange("STANDBY"); }}
+          onClick={(e) => { e.stopPropagation(); onStatusChange("STANDBY"); }}
           title="Colocar em standby"
         >
           <Pause size={14} />
         </button>
         <button
           className={styles.btnIconDelete}
-          onClick={e => { e.stopPropagation(); setConfirmDelete(true); }}
+          onClick={(e) => { e.stopPropagation(); setConfirmDelete(true); }}
           title="Deletar pedido"
         >
           <Trash2 size={14} />
@@ -163,7 +160,6 @@ export function OrderDetailCard({
       {/* ── Corpo expandido ── */}
       {open && (
         <div className={styles.body}>
-
           {/* Link do cliente */}
           <div className={styles.linkRow}>
             <div className={styles.linkInfo}>
@@ -181,16 +177,16 @@ export function OrderDetailCard({
             <div className={styles.clientRow}>
               <Field label="Nome">
                 <Input placeholder="Ex: João Silva" value={clientName}
-                  onChange={e => setClientName(e.target.value)} />
+                  onChange={(e) => setClientName(e.target.value)} />
               </Field>
               <Field label="Telefone">
                 <Input placeholder="(11) 99999-9999" value={clientPhone}
-                  onChange={e => setClientPhone(e.target.value)} />
+                  onChange={(e) => setClientPhone(e.target.value)} />
               </Field>
             </div>
           </div>
 
-          {/* ── Endereço — componente extraído ── */}
+          {/* Endereço */}
           <AddressForm
             address={address}
             onChange={setAddress}
@@ -210,16 +206,18 @@ export function OrderDetailCard({
                 min="0"
                 step="0.01"
                 value={totalAmount}
-                onChange={e => setTotalAmount(e.target.value)}
+                onChange={(e) => setTotalAmount(e.target.value)}
               />
             </Field>
 
-            {/* ── Métodos de pagamento — componente extraído ── */}
-            <PaymentMethodSelector
-              value={paymentMethod}
-              savedValue={savedPaymentMethod}
-              onChange={setPaymentMethod}
-            />
+            {availablePaymentMethods.length > 0 && (
+              <PaymentMethodSelector
+                value={paymentMethod}
+                savedValue={savedPaymentMethod}
+                onChange={setPaymentMethod}
+                availableMethods={availablePaymentMethods}
+              />
+            )}
           </div>
 
           {/* Observações */}
@@ -230,7 +228,7 @@ export function OrderDetailCard({
             <TextArea
               placeholder="Ex: Sem cebola, apartamento..."
               value={notes}
-              onChange={e => setNotes(e.target.value)}
+              onChange={(e) => setNotes(e.target.value)}
               rows={2}
             />
           </div>
@@ -240,7 +238,6 @@ export function OrderDetailCard({
               {saving ? <><span className={styles.spinner} /> Salvando...</> : "Salvar pedido"}
             </button>
           </div>
-
         </div>
       )}
     </div>

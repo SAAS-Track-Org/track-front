@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom'
-import type { DeliverySummary, DeliveryStatus, OrderStatus } from '@/types'
+import type { DeliverySummary, DeliveryStatus, OrderStatus } from '@/types/types'
 import styles from './DeliveryCard.module.css'
 
 const DELIVERY_STATUS_LABEL: Record<DeliveryStatus, string> = {

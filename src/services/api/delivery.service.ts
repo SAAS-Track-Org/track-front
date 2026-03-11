@@ -10,7 +10,7 @@ import type {
   StandbyOrderSummary,
   UpdateOrderRequest,
   UpdateDeliverymanRequest,
-} from '@/types'
+} from '@/types/types'
 
 export const deliveryService = {
   // Dashboard — lista entregas

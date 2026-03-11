@@ -1,5 +1,5 @@
 import { api } from './client'
-import type { AddressDetail, PaymentMethod, DeliveryStatus } from '@/types'
+import type { AddressDetail, PaymentMethod, DeliveryStatus } from '@/types/types'
 
 export interface TrackOrderResponse {
   orderCode: string

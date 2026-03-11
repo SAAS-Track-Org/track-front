@@ -1,29 +1,5 @@
-// ─── Enums ────────────────────────────────────────────────────────────────────
+import { OrderDeliveryStatus, PaymentMethod, DeliveryStatus, OrderStatus } from "./enum.types"
 
-export type DeliveryStatus =
-  | 'CREATED'
-  | 'IN_TRANSIT'
-  | 'DELIVERED'
-  | 'CANCELLED'
-
-export type OrderStatus = 'ADDRESS_PENDING' | 'ADDRESS_CONFIRMED'
-
-export type OrderDeliveryStatus =
-  | 'WAITING'
-  | 'ON_THE_WAY'
-  | 'ARRIVING'
-  | 'DELIVERED'
-  | 'CANCELLED'
-  | 'DELETED'
-  | 'STANDBY'
-
-export type PaymentMethod =
-  | 'CASH'
-  | 'PIX'
-  | 'CREDIT_CARD'
-  | 'DEBIT_CARD'
-  | 'MEAL_VOUCHER'
-  | 'FOOD_VOUCHER'
 
 // ─── Domain Forms ─────────────────────────────────────────────────────────────
 
@@ -143,79 +119,7 @@ export interface DeliverySummary {
 
 // ─── API Response — Delivery Detail ──────────────────────────────────────────
 
-export interface AddressDetail {
-  street: string
-  number: string
-  complement: string
-  neighborhood: string
-  city: string
-  state: string
-  zipCode: string
-  country: string
-}
 
-export interface OrderDetail {
-  code: string
-  clientName: string | null
-  clientPhone: string | null
-  addressStatus: OrderStatus
-  deliveryStatus: OrderDeliveryStatus
-  notes: string | null
-  totalAmount: number | null
-  paymentMethod: PaymentMethod | null
-  address: AddressDetail | null
-}
-
-export interface StandbyOrderSummary {
-  code: string
-  clientName: string | null
-  deliveryId: string
-  label: string
-}
-
-export interface DeliveryDetailResponse {
-  deliveryId: string
-  publicCodeClient: string
-  publicCodeDeliveryman: string
-  status: DeliveryStatus
-  deliverymanName: string
-  deliverymanPhone: string | null
-  createdAt: string
-  orders: OrderDetail[]
-}
-
-export interface UpdateOrderRequest {
-  clientName: string | null
-  clientPhone: string | null
-  notes: string | null
-  totalAmount: number | null
-  paymentMethod: PaymentMethod | null
-  address: AddressDetail | null
-}
-
-export interface DeliveryDetailsPageResult {
-  delivery: DeliveryDetailResponse | null;
-  loading: boolean;
-  error: string | null;
-  addOrder: () => Promise<void>;
-  updateOrder: (
-    orderCode: string,
-    payload: UpdateOrderRequest,
-  ) => Promise<void>;
-  updateOrderStatus: (
-    orderCode: string,
-    status: OrderDeliveryStatus,
-  ) => Promise<void>;
-  linkStandbyOrder: (orderCode: string) => Promise<void>;
-  updateDeliveryman: (payload: UpdateDeliverymanRequest) => Promise<void>;
-  savingOrder: string | null;
-  savingDeliveryman: boolean;
-}
-
-export interface UpdateDeliverymanRequest {
-  name: string | null
-  phoneNumber: string | null
-}
 
 // ─── API Response — Track (cliente) ──────────────────────────────────────────
 
@@ -287,20 +191,13 @@ export interface AuthUser {
 
 // ─── API Response — Driver (entregador) ──────────────────────────────────────
 
-export interface DriverOrderDetail {
-  orderCode: string
-  clientName: string | null
-  clientPhone: string | null
-  address: AddressDetail | null
-  deliveryStatus: OrderDeliveryStatus
-  notes: string | null
-  totalAmount: number | null
-  paymentMethod: PaymentMethod | null
-}
-
-export interface DriverDeliveryResponse {
-  deliveryId: string
-  publicCodeDeliveryman: string
-  status: DeliveryStatus
-  orders: DriverOrderDetail[]
+export interface AddressDetail {
+  street: string
+  number: string
+  complement: string
+  neighborhood: string
+  city: string
+  state: string
+  zipCode: string
+  country: string
 }
