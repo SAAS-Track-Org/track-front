@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useNavigationTracking } from '@/hooks/useNavigationTracking'
-import { useGeocode } from '@/hooks/Usegeocode'
+import { useGeocodes } from '@/hooks/useGeoCodes'
 import styles from './Navigationpage.module.css'
 
 declare const L: any
@@ -16,7 +16,7 @@ export function NavigationPage() {
   const { order, delivererLocation, loading, guard } =
     useNavigationTracking(publicCodeClient!, orderCode!)
 
-  const { coords: destCoords } = useGeocode(order?.address ?? null)
+  const { coords: destCoords } = useGeocodes(order?.address ?? null)
 
   const mapRef        = useRef<any>(null)
   const markerRef     = useRef<any>(null)
