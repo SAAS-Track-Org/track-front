@@ -1,4 +1,4 @@
-import { PaymentMethod, OrderStatus } from "./enum.types";
+import { PaymentMethod, AddressStatus } from "./enum.types";
 
 export interface ClientForm {
   id: string | null;
@@ -60,7 +60,7 @@ export interface Address {
 export interface OrderResponse {
   code: string;
   clientName: string;
-  status: OrderStatus;
+  status: AddressStatus;
   address: Address | null;
 }
 

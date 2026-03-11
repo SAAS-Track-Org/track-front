@@ -3,7 +3,7 @@ import { Address, OrderResponse } from "@/types/types";
 import {
   OrderDeliveryStatus,
   PaymentMethod,
-  OrderStatus,
+  AddressStatus,
   DeliveryStatus,
 } from "./enum.types";
 
@@ -11,7 +11,7 @@ export interface OrderDetail {
   code: string;
   clientName: string | null;
   clientPhone: string | null;
-  addressStatus: OrderStatus;
+  addressStatus: AddressStatus;
   deliveryStatus: OrderDeliveryStatus;
   notes: string | null;
   totalAmount: number | null;
@@ -78,7 +78,7 @@ export interface CreateDeliveryResponse {
   orders: {
     code: string;
     clientName: string;
-    status: OrderStatus;
+    status: AddressStatus;
     address: Address | null;
   }[];
 }
@@ -87,7 +87,7 @@ export interface CreateDeliveryResponse {
 
 export interface DeliveryOrderSummary {
   code: string;
-  stausAddress: OrderStatus;
+  stausAddress: AddressStatus;
 }
 
 export interface DeliverySummary {

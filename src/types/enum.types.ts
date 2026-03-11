@@ -21,4 +21,4 @@ export type PaymentMethod =
   | "MEAL_VOUCHER"
   | "FOOD_VOUCHER";
 
-export type OrderStatus = "ADDRESS_PENDING" | "ADDRESS_CONFIRMED";
+export type AddressStatus = "ADDRESS_PENDING" | "ADDRESS_CONFIRMED";

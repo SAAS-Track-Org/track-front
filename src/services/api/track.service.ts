@@ -1,30 +1,6 @@
 import { api } from "./client";
-import type { Address } from "@/types/types";
-import type { DeliveryStatus, PaymentMethod } from "@/types/enum.types";
-
-export interface TrackOrderResponse {
-  orderCode: string;
-  clientName: string | null;
-  clientPhone: string | null;
-  deliveryStatus: string;
-  addressStatus: "ADDRESS_PENDING" | "ADDRESS_CONFIRMED";
-  address: Address | null;
-  paymentMethod: PaymentMethod | null;
-  totalAmount: number | null;
-  notes: string | null;
-  delivery: {
-    deliveryId: string;
-    publicCodeClient: string;
-    status: DeliveryStatus;
-    currentLat: number | null;
-    currentLng: number | null;
-  };
-}
-
-export interface SaveClientDataRequest {
-  address: Address;
-  paymentMethod: PaymentMethod | null;
-}
+import type { TrackOrderResponse } from "@/types/orders.types";
+import type { SaveClientDataRequest } from "@/types/client.types";
 
 export const trackService = {
   getOrder: async (

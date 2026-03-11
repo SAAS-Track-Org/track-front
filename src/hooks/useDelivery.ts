@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { deliveryService } from "@/services/api/delivery.service";
+import { usePolling } from "@/hooks/usePolling";
 import type { OrderDeliveryStatus } from "@/types/enum.types";
 import type { DriverDeliveryResponse } from "@/types/driver.types";
 
@@ -23,10 +24,10 @@ export function useDriverDelivery(
   const [deliveringOrder, setDeliveringOrder] = useState<string | null>(null);
   const [locationGranted, setLocationGranted] = useState(false);
 
-  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const intervalRef     = useRef<ReturnType<typeof setInterval> | null>(null);
   const lastLocationRef = useRef<{ lat: number; lng: number } | null>(null);
 
-  // ── Busca dados da entrega ──
+  // ── Busca inicial ──
   useEffect(() => {
     setLoading(true);
     deliveryService
@@ -36,32 +37,36 @@ export function useDriverDelivery(
       .finally(() => setLoading(false));
   }, [publicCodeDeliveryman]);
 
-  // ── Solicita permissão de geolocalização IMEDIATAMENTE ao montar ──
+  // ── Polling a cada 3s ──
+  usePolling(
+    () => {
+      deliveryService
+        .driver(publicCodeDeliveryman)
+        .then(setDelivery)
+        .catch(() => {});
+    },
+    { interval: 5000, runOnMount: false },
+  );
+
+  // ── Solicita permissão de geolocalização ao montar ──
   useEffect(() => {
     if (!navigator.geolocation) return;
 
-    // Solicita uma vez imediatamente — isso abre o popup do browser
     navigator.geolocation.getCurrentPosition(
       (pos) => {
         setLocationGranted(true);
-        const current = {
-          lat: pos.coords.latitude,
-          lng: pos.coords.longitude,
-        };
+        const current = { lat: pos.coords.latitude, lng: pos.coords.longitude };
         lastLocationRef.current = current;
         deliveryService
           .updateLocation(publicCodeDeliveryman, current.lat, current.lng)
           .catch(() => {});
       },
-      () => {
-        // Usuário negou ou erro — continua sem localização
-        setLocationGranted(false);
-      },
+      () => setLocationGranted(false),
       { enableHighAccuracy: true, timeout: 10000 },
     );
   }, [publicCodeDeliveryman]);
 
-  // ── Geolocalização a cada 3 segundos (só começa após permissão) ──
+  // ── Envia localização a cada 3s (só após permissão, só se moveu > 5m) ──
   useEffect(() => {
     if (!navigator.geolocation || !locationGranted) return;
 
@@ -80,10 +85,7 @@ export function useDriverDelivery(
     const sendLocation = () => {
       navigator.geolocation.getCurrentPosition(
         (pos) => {
-          const current = {
-            lat: pos.coords.latitude,
-            lng: pos.coords.longitude,
-          };
+          const current = { lat: pos.coords.latitude, lng: pos.coords.longitude };
           const last = lastLocationRef.current;
           if (last && distanceInMeters(last, current) < 5) return;
           lastLocationRef.current = current;
@@ -109,17 +111,12 @@ export function useDriverDelivery(
     setStarting(true);
     try {
       const activeOrders = delivery.orders.filter(
-        (o) =>
-          o.deliveryStatus !== "DELIVERED" && o.deliveryStatus !== "CANCELLED",
+        (o) => o.deliveryStatus !== "DELIVERED" && o.deliveryStatus !== "CANCELLED",
       );
 
       await Promise.all(
         activeOrders.map((o) =>
-          deliveryService.updateOrderStatus(
-            delivery.deliveryId,
-            o.orderCode,
-            "ON_THE_WAY",
-          ),
+          deliveryService.updateOrderStatus(delivery.deliveryId, o.orderCode, "ON_THE_WAY"),
         ),
       );
 
@@ -137,16 +134,13 @@ export function useDriverDelivery(
           ...prev,
           status: "IN_TRANSIT",
           orders: prev.orders.map((o) => {
-            const activeIdx = activeOrders.findIndex(
-              (a) => a.orderCode === o.orderCode,
-            );
+            const activeIdx = activeOrders.findIndex((a) => a.orderCode === o.orderCode);
             if (activeIdx === -1) return o;
             return {
               ...o,
-              deliveryStatus:
-                activeIdx === 0
-                  ? "ARRIVING"
-                  : ("ON_THE_WAY" as OrderDeliveryStatus),
+              deliveryStatus: activeIdx === 0
+                ? "ARRIVING"
+                : ("ON_THE_WAY" as OrderDeliveryStatus),
             };
           }),
         };
@@ -161,11 +155,7 @@ export function useDriverDelivery(
     if (!delivery) return;
     setDeliveringOrder(orderCode);
     try {
-      await deliveryService.updateOrderStatus(
-        delivery.deliveryId,
-        orderCode,
-        "DELIVERED",
-      );
+      await deliveryService.updateOrderStatus(delivery.deliveryId, orderCode, "DELIVERED");
 
       const activeOrders = delivery.orders.filter(
         (o) =>
@@ -189,15 +179,9 @@ export function useDriverDelivery(
           ...prev,
           orders: prev.orders.map((o) => {
             if (o.orderCode === orderCode)
-              return {
-                ...o,
-                deliveryStatus: "DELIVERED" as OrderDeliveryStatus,
-              };
+              return { ...o, deliveryStatus: "DELIVERED" as OrderDeliveryStatus };
             if (o.orderCode === nextCode)
-              return {
-                ...o,
-                deliveryStatus: "ARRIVING" as OrderDeliveryStatus,
-              };
+              return { ...o, deliveryStatus: "ARRIVING" as OrderDeliveryStatus };
             return o;
           }),
         };
@@ -207,13 +191,5 @@ export function useDriverDelivery(
     }
   };
 
-  return {
-    delivery,
-    loading,
-    error,
-    starting,
-    deliveringOrder,
-    startDelivery,
-    deliverOrder,
-  };
+  return { delivery, loading, error, starting, deliveringOrder, startDelivery, deliverOrder };
 }

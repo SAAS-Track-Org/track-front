@@ -7,14 +7,18 @@ import styles from "./Driverpage.module.css";
 import googleMapsLogo from "@/img/google-maps-logo.png";
 import wazeLogo from "@/img/waze-logo.png";
 
-const DELIVERY_STATUS_CONFIG: Record<string, { label: string; color: string }> =
-  {
-    WAITING: { label: "Aguardando", color: "var(--yellow)" },
-    ON_THE_WAY: { label: "A caminho", color: "var(--blue)" },
-    ARRIVING: { label: "Chegando", color: "var(--orange)" },
-    DELIVERED: { label: "Entregue", color: "var(--green)" },
-    CANCELLED: { label: "Cancelado", color: "var(--red)" },
-  };
+const DELIVERY_STATUS_CONFIG: Record<string, { label: string; color: string }> = {
+  WAITING:    { label: "Aguardando", color: "var(--yellow)" },
+  ON_THE_WAY: { label: "A caminho",  color: "var(--blue)"   },
+  ARRIVING:   { label: "Chegando",   color: "var(--orange)" },
+  DELIVERED:  { label: "Entregue",   color: "var(--green)"  },
+  CANCELLED:  { label: "Cancelado",  color: "var(--red)"    },
+};
+
+const ADDRESS_STATUS_CONFIG: Record<string, { label: string; color: string }> = {
+  ADDRESS_PENDING:   { label: "End. pendente",   color: "var(--orange)" },
+  ADDRESS_CONFIRMED: { label: "End. confirmado", color: "var(--green)"  },
+};
 
 const FALLBACK_STATUS = { label: "Desconhecido", color: "var(--text-muted)" };
 
@@ -22,10 +26,10 @@ const formatCurrency = (value: number) =>
   value.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 
 const PAYMENT_LABELS: Record<string, string> = {
-  CASH: "Dinheiro",
-  PIX: "Pix",
-  CREDIT_CARD: "Crédito",
-  DEBIT_CARD: "Débito",
+  CASH:         "Dinheiro",
+  PIX:          "Pix",
+  CREDIT_CARD:  "Crédito",
+  DEBIT_CARD:   "Débito",
   MEAL_VOUCHER: "Vale refeição",
   FOOD_VOUCHER: "Vale alimentação",
 };
@@ -43,11 +47,7 @@ interface ConfirmModalProps {
   onCancel: () => void;
 }
 
-function ConfirmDeliverModal({
-  orderCode,
-  onConfirm,
-  onCancel,
-}: ConfirmModalProps) {
+function ConfirmDeliverModal({ orderCode, onConfirm, onCancel }: ConfirmModalProps) {
   return (
     <div className={styles.overlay} onClick={onCancel}>
       <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
@@ -62,12 +62,8 @@ function ConfirmDeliverModal({
           </p>
         </div>
         <div className={styles.modalActions}>
-          <button className={styles.modalBtnCancel} onClick={onCancel}>
-            Cancelar
-          </button>
-          <button className={styles.modalBtnConfirm} onClick={onConfirm}>
-            Sim, entreguei
-          </button>
+          <button className={styles.modalBtnCancel} onClick={onCancel}>Cancelar</button>
+          <button className={styles.modalBtnConfirm} onClick={onConfirm}>Sim, entreguei</button>
         </div>
       </div>
     </div>
@@ -82,10 +78,10 @@ interface OrderCardProps {
 
 function DriverOrderCard({ order, delivering, onDeliver }: OrderCardProps) {
   const [open, setOpen] = useState(false);
-  const statusConfig =
-    DELIVERY_STATUS_CONFIG[order.deliveryStatus] ?? FALLBACK_STATUS;
+  const deliveryStatus = DELIVERY_STATUS_CONFIG[order.deliveryStatus] ?? FALLBACK_STATUS;
+  const addressStatus  = ADDRESS_STATUS_CONFIG[order.addressStatus]   ?? FALLBACK_STATUS;
   const isDelivered = order.deliveryStatus === "DELIVERED";
-  const isArriving = order.deliveryStatus === "ARRIVING";
+  const isArriving  = order.deliveryStatus === "ARRIVING";
   const addressQuery = buildAddressQuery(order.address);
 
   return (
@@ -105,31 +101,45 @@ function DriverOrderCard({ order, delivering, onDeliver }: OrderCardProps) {
               {formatCurrency(order.totalAmount)}
             </span>
           )}
+
+          {/* Status do endereço */}
           <span
             className={styles.statusPill}
-            style={{
-              color: statusConfig.color,
-              borderColor: statusConfig.color,
-            }}
+            style={{ color: addressStatus.color, borderColor: addressStatus.color }}
           >
             <span
               className={styles.statusDot}
               style={{
-                background: statusConfig.color,
-                animation: isArriving
+                background: addressStatus.color,
+                animation: order.addressStatus === "ADDRESS_PENDING"
                   ? "pulse 1.4s ease-in-out infinite"
                   : "none",
               }}
             />
-            {statusConfig.label}
+            {addressStatus.label}
           </span>
+
+          {/* Status do pedido */}
+          <span
+            className={styles.statusPill}
+            style={{ color: deliveryStatus.color, borderColor: deliveryStatus.color }}
+          >
+            <span
+              className={styles.statusDot}
+              style={{
+                background: deliveryStatus.color,
+                animation: isArriving ? "pulse 1.4s ease-in-out infinite" : "none",
+              }}
+            />
+            {deliveryStatus.label}
+          </span>
+
           <span className={styles.chevron}>{open ? "▴" : "▾"}</span>
         </div>
       </div>
 
       {open && (
         <div className={styles.orderBody}>
-          {/* Endereço */}
           {order.address && (
             <div className={styles.orderSection}>
               <span className={styles.orderSectionLabel}>Telefone</span>
@@ -139,13 +149,10 @@ function DriverOrderCard({ order, delivering, onDeliver }: OrderCardProps) {
               <span className={styles.orderSectionLabel}>Endereço</span>
               <p className={styles.addressText}>
                 {order.address.street}, {order.address.number}
-                {order.address.complement
-                  ? ` — ${order.address.complement}`
-                  : ""}
+                {order.address.complement ? ` — ${order.address.complement}` : ""}
               </p>
               <p className={styles.addressSub}>
-                {order.address.neighborhood} · {order.address.city}/
-                {order.address.state}
+                {order.address.neighborhood} · {order.address.city}/{order.address.state}
               </p>
               {order.address.zipCode && (
                 <p className={styles.addressSub}>CEP {order.address.zipCode}</p>
@@ -158,11 +165,7 @@ function DriverOrderCard({ order, delivering, onDeliver }: OrderCardProps) {
                   className={styles.btnNav}
                   onClick={(e) => e.stopPropagation()}
                 >
-                  <img
-                    src={googleMapsLogo}
-                    alt="Google Maps"
-                    className={styles.navIcon}
-                  />
+                  <img src={googleMapsLogo} alt="Google Maps" className={styles.navIcon} />
                 </a>
                 <a
                   href={`https://waze.com/ul?q=${addressQuery}&navigate=yes`}
@@ -177,7 +180,6 @@ function DriverOrderCard({ order, delivering, onDeliver }: OrderCardProps) {
             </div>
           )}
 
-          {/* Pagamento */}
           {(order.paymentMethod || order.totalAmount != null) && (
             <div className={styles.orderSection}>
               <span className={styles.orderSectionLabel}>Pagamento</span>
@@ -196,7 +198,6 @@ function DriverOrderCard({ order, delivering, onDeliver }: OrderCardProps) {
             </div>
           )}
 
-          {/* Observações */}
           {order.notes && (
             <div className={styles.orderSection}>
               <span className={styles.orderSectionLabel}>Observações</span>
@@ -204,7 +205,6 @@ function DriverOrderCard({ order, delivering, onDeliver }: OrderCardProps) {
             </div>
           )}
 
-          {/* Botão entregar */}
           {!isDelivered && (
             <div className={styles.orderFooter}>
               <button
@@ -213,13 +213,9 @@ function DriverOrderCard({ order, delivering, onDeliver }: OrderCardProps) {
                 disabled={delivering || !isArriving}
               >
                 {delivering ? (
-                  <>
-                    <span className={styles.spinner} /> Confirmando...
-                  </>
+                  <><span className={styles.spinner} /> Confirmando...</>
                 ) : (
-                  <>
-                    <CheckCircle size={15} /> Entreguei
-                  </>
+                  <><CheckCircle size={15} /> Entreguei</>
                 )}
               </button>
             </div>
@@ -237,35 +233,18 @@ function DriverOrderCard({ order, delivering, onDeliver }: OrderCardProps) {
 }
 
 export function DriverPage() {
-  const { publicCodeDeliveryman } = useParams<{
-    publicCodeDeliveryman: string;
-  }>();
+  const { publicCodeDeliveryman } = useParams<{ publicCodeDeliveryman: string }>();
   const {
-    delivery,
-    loading,
-    error,
-    starting,
-    deliveringOrder,
-    startDelivery,
-    deliverOrder,
+    delivery, loading, error, starting, deliveringOrder, startDelivery, deliverOrder,
   } = useDriverDelivery(publicCodeDeliveryman!);
 
-  const [confirmOrder, setConfirmOrder] = useState<string | null>(null);
-  const [confirmStart, setConfirmStart] = useState(false);
-
-  const [startLocation, setStartLocation] = useState<{
-    lat: number;
-    lng: number;
-  } | null>(null);
-  
+  const [confirmOrder, setConfirmOrder]   = useState<string | null>(null);
+  const [confirmStart, setConfirmStart]   = useState(false);
+  const [startLocation, setStartLocation] = useState<{ lat: number; lng: number } | null>(null);
 
   const handleStart = () => {
     navigator.geolocation.getCurrentPosition(
-      (pos) =>
-        setStartLocation({
-          lat: pos.coords.latitude,
-          lng: pos.coords.longitude,
-        }),
+      (pos) => setStartLocation({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
       () => {},
       { enableHighAccuracy: true, timeout: 5000 },
     );
@@ -277,9 +256,7 @@ export function DriverPage() {
     return (
       <div className={styles.page}>
         <div className={styles.container}>
-          <div className={styles.stateBox}>
-            <span className={styles.spinner} /> Carregando entrega...
-          </div>
+          <div className={styles.stateBox}><span className={styles.spinner} /> Carregando entrega...</div>
         </div>
       </div>
     );
@@ -289,55 +266,38 @@ export function DriverPage() {
     return (
       <div className={styles.page}>
         <div className={styles.container}>
-          <div className={styles.stateBox} data-error>
-            ⚠ {error ?? "Entrega não encontrada"}
-          </div>
+          <div className={styles.stateBox} data-error>⚠ {error ?? "Entrega não encontrada"}</div>
         </div>
       </div>
     );
   }
 
-  const allAddressesConfirmed = delivery.orders.every(
-    (o) => o.address !== null,
-  );
-
-  const activeOrders = delivery.orders.filter(
-    (o) => o.deliveryStatus !== "DELIVERED" && o.deliveryStatus !== "CANCELLED",
-  );
-  const deliveredCount = delivery.orders.filter(
-    (o) => o.deliveryStatus === "DELIVERED",
-  ).length;
-  const hasStarted = delivery.orders.some(
-    (o) => o.deliveryStatus !== "WAITING",
-  );
-  const allDone = activeOrders.length === 0;
+  const allAddressesConfirmed = delivery.orders.every((o) => o.address !== null);
+  const activeOrders   = delivery.orders.filter((o) => o.deliveryStatus !== "DELIVERED" && o.deliveryStatus !== "CANCELLED");
+  const deliveredCount = delivery.orders.filter((o) => o.deliveryStatus === "DELIVERED").length;
+  const hasStarted     = delivery.orders.some((o) => o.deliveryStatus !== "WAITING");
+  const allDone        = activeOrders.length === 0;
 
   return (
     <div className={styles.page}>
       <div className={styles.container}>
-        {/* ── Header ── */}
         <div className={styles.header}>
           <div className={styles.headerBrand}>
             <Package size={20} />
             <span className={styles.brandName}>MotoTrack</span>
           </div>
           <div className={styles.headerStats}>
-            <span className={styles.statItem}>
-              {deliveredCount}/{delivery.orders.length} entregas
-            </span>
+            <span className={styles.statItem}>{deliveredCount}/{delivery.orders.length} entregas</span>
           </div>
         </div>
 
-        {/* ── Status da rota ── */}
         <div className={styles.routeCard}>
           <div className={styles.routeInfo}>
             <span className={styles.routeLabel}>
               {allDone
                 ? "✅ Entregas Finalizadas"
                 : allAddressesConfirmed
-                  ? hasStarted
-                    ? "🛵 Entrega em andamento"
-                    : "📋 Pronto para iniciar"
+                  ? hasStarted ? "🛵 Entrega em andamento" : "📋 Pronto para iniciar"
                   : "⚠ Endereços pendentes"}
             </span>
             <span className={styles.routeSub}>
@@ -350,20 +310,10 @@ export function DriverPage() {
           {!hasStarted && !allDone && (
             <button
               className={`${styles.btnStart} ${allAddressesConfirmed ? styles.pulsBtnStart : ""}`}
-              onClick={() =>
-                !allAddressesConfirmed ? setConfirmStart(true) : handleStart()
-              }
+              onClick={() => !allAddressesConfirmed ? setConfirmStart(true) : handleStart()}
               disabled={starting}
             >
-              {starting ? (
-                <>
-                  <span className={styles.spinner} /> Iniciando...
-                </>
-              ) : (
-                <>
-                  <Navigation size={15} /> Iniciar entrega
-                </>
-              )}
+              {starting ? <><span className={styles.spinner} /> Iniciando...</> : <><Navigation size={15} /> Iniciar entrega</>}
             </button>
           )}
 
@@ -373,14 +323,12 @@ export function DriverPage() {
               target="_blank"
               rel="noopener noreferrer"
               className={`${styles.btnStart} ${styles.pulsBtnStart}`}
-              onClick={(e) => e.stopPropagation()}
             >
               <Navigation size={15} /> Retornar ao Início
             </a>
           )}
         </div>
 
-        {/* ── Lista de pedidos ── */}
         <div className={styles.ordersList}>
           {delivery.orders.map((order) => (
             <DriverOrderCard
@@ -393,47 +341,27 @@ export function DriverPage() {
         </div>
       </div>
 
-      {/* ── Modal de confirmação ── */}
       {confirmOrder && (
         <ConfirmDeliverModal
           orderCode={confirmOrder}
-          onConfirm={async () => {
-            await deliverOrder(confirmOrder);
-            setConfirmOrder(null);
-          }}
+          onConfirm={async () => { await deliverOrder(confirmOrder); setConfirmOrder(null); }}
           onCancel={() => setConfirmOrder(null)}
         />
       )}
 
-      {/* ── Modal endereços pendentes ── */}
       {confirmStart && (
         <div className={styles.overlay} onClick={() => setConfirmStart(false)}>
           <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
-            <div
-              className={styles.modalIcon}
-              style={{ borderColor: "var(--yellow)", color: "var(--yellow)" }}
-            >
-              ⚠
-            </div>
+            <div className={styles.modalIcon} style={{ borderColor: "var(--yellow)", color: "var(--yellow)" }}>⚠</div>
             <div className={styles.modalContent}>
               <h3 className={styles.modalTitle}>Endereços pendentes</h3>
               <p className={styles.modalDesc}>
-                Nem todos os endereços foram confirmados pelos clientes. Deseja
-                iniciar mesmo assim?
+                Nem todos os endereços foram confirmados pelos clientes. Deseja iniciar mesmo assim?
               </p>
             </div>
             <div className={styles.modalActions}>
-              <button
-                className={styles.modalBtnCancel}
-                onClick={() => setConfirmStart(false)}
-              >
-                Cancelar
-              </button>
-              <button
-                className={styles.modalBtnConfirm}
-                style={{ background: "var(--yellow)", color: "#000" }}
-                onClick={handleStart}
-              >
+              <button className={styles.modalBtnCancel} onClick={() => setConfirmStart(false)}>Cancelar</button>
+              <button className={styles.modalBtnConfirm} style={{ background: "var(--yellow)", color: "#000" }} onClick={handleStart}>
                 Iniciar mesmo assim
               </button>
             </div>

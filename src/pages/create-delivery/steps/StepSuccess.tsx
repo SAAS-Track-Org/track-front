@@ -1,5 +1,5 @@
 import { useState } from "react";
-import type { OrderStatus } from "@/types/enum.types";
+import type { AddressStatus } from "@/types/enum.types";
 import type {
   CreateDeliveryResponse,
   OrderDetail,
@@ -13,12 +13,12 @@ interface Props {
   onAddOrder: () => Promise<OrderDetail>;
 }
 
-const STATUS_LABEL: Record<OrderStatus, string> = {
+const STATUS_LABEL: Record<AddressStatus, string> = {
   ADDRESS_CONFIRMED: "Endereço confirmado",
   ADDRESS_PENDING: "Endereço pendente",
 };
 
-const STATUS_COLOR: Record<OrderStatus, string> = {
+const STATUS_COLOR: Record<AddressStatus, string> = {
   ADDRESS_PENDING: "var(--yellow)",
   ADDRESS_CONFIRMED: "var(--green)",
 };

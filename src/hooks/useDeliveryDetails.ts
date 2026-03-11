@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+import { usePolling } from "@/hooks/usePolling";
 import { deliveryService } from "@/services/api/delivery.service";
 
 import { OrderDeliveryStatus } from "@/types/enum.types";
@@ -15,7 +16,6 @@ interface UseDeliveryDetailsResult {
   userInfo?: UserInfo;
   loading: boolean;
   error: string | null;
-  refetch: () => void;
   addOrder: () => Promise<void>;
   updateOrder: (
     orderCode: string,
@@ -40,7 +40,7 @@ export function useDeliveryDetails(
   const [savingOrder, setSavingOrder] = useState<string | null>(null);
   const [savingDeliveryman, setSavingDeliveryman] = useState(false);
 
-  const fetch = useCallback(() => {
+  useEffect(() => {
     setLoading(true);
     deliveryService
       .detail(deliveryId)
@@ -49,9 +49,15 @@ export function useDeliveryDetails(
       .finally(() => setLoading(false));
   }, [deliveryId]);
 
-  useEffect(() => {
-    fetch();
-  }, [fetch]);
+  usePolling(
+    () => {
+      deliveryService
+        .detail(deliveryId)
+        .then(setDelivery)
+        .catch(() => {});
+    },
+    { interval: 5000, runOnMount: false },
+  );
 
   const addOrder = async () => {
     const newOrder = await deliveryService.addOrder(deliveryId);
@@ -150,7 +156,6 @@ export function useDeliveryDetails(
     delivery,
     loading,
     error,
-    refetch: fetch,
     addOrder,
     updateOrder,
     updateOrderStatus,

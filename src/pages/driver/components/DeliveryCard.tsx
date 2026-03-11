@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import type { DeliveryStatus, OrderStatus } from "@/types/enum.types";
+import type { DeliveryStatus, AddressStatus } from "@/types/enum.types";
 import type { DeliverySummary } from "@/types/delivery.types";
 import styles from "./DeliveryCard.module.css";
 
@@ -17,12 +17,12 @@ const DELIVERY_STATUS_COLOR: Record<DeliveryStatus, string> = {
   CANCELLED: "var(--red)",
 };
 
-const ORDER_STATUS_TOOLTIP: Record<OrderStatus, string> = {
+const ORDER_STATUS_TOOLTIP: Record<AddressStatus, string> = {
   ADDRESS_PENDING: "Endereço pendente",
   ADDRESS_CONFIRMED: "Endereço confirmado",
 };
 
-const ORDER_STATUS_DOT_COLOR: Record<OrderStatus, string> = {
+const ORDER_STATUS_DOT_COLOR: Record<AddressStatus, string> = {
   ADDRESS_PENDING: "var(--orange)",
   ADDRESS_CONFIRMED: "var(--green)",
 };
