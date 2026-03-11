@@ -1,10 +1,11 @@
 import { Field } from "@/components/ui/Field";
 import { Input } from "@/components/ui/Input";
 import { useCep } from "@/hooks/useCep";
-import type { AddressDetail } from "@/types/types";
+import type { Address } from "@/types/types";
 import styles from "./Addressform.module.css";
 
-export const EMPTY_ADDRESS: AddressDetail = {
+export const EMPTY_ADDRESS: Address = {
+  id: "",
   zipCode: "",
   street: "",
   number: "",
@@ -16,8 +17,8 @@ export const EMPTY_ADDRESS: AddressDetail = {
 };
 
 interface AddressFormProps {
-  address: AddressDetail;
-  onChange: (address: AddressDetail) => void;
+  address: Address;
+  onChange: (address: Address) => void;
   addressError?: string | null;
   onClearError?: () => void;
 }
@@ -49,7 +50,7 @@ export function AddressForm({
     }
   };
 
-  function set(field: keyof AddressDetail, value: string) {
+  function set(field: keyof Address, value: string) {
     onClearError?.();
     onChange({ ...address, [field]: value });
   }

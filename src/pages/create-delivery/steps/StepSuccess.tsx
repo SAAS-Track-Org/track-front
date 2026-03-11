@@ -1,5 +1,9 @@
 import { useState } from "react";
-import type { CreateDeliveryResponse, OrderDetail, OrderStatus } from "@/types/types";
+import type { OrderStatus } from "@/types/enum.types";
+import type {
+  CreateDeliveryResponse,
+  OrderDetail,
+} from "@/types/delivery.types";
 import styles from "./StepSuccess.module.css";
 
 interface Props {
@@ -11,27 +15,27 @@ interface Props {
 
 const STATUS_LABEL: Record<OrderStatus, string> = {
   ADDRESS_CONFIRMED: "Endereço confirmado",
-  ADDRESS_PENDING:   "Endereço pendente",
+  ADDRESS_PENDING: "Endereço pendente",
 };
 
 const STATUS_COLOR: Record<OrderStatus, string> = {
-  ADDRESS_PENDING:   "var(--yellow)",
+  ADDRESS_PENDING: "var(--yellow)",
   ADDRESS_CONFIRMED: "var(--green)",
 };
 
 export function StepSuccess({ response, onManage, onNew, onAddOrder }: Props) {
-  const [addingOrder, setAddingOrder] = useState(false)
+  const [addingOrder, setAddingOrder] = useState(false);
 
   const handleAddOrder = async () => {
-    setAddingOrder(true)
+    setAddingOrder(true);
     try {
-      await onAddOrder()
+      await onAddOrder();
       // Recarrega a página de detalhe após adicionar — navega direto
-      onManage()
+      onManage();
     } finally {
-      setAddingOrder(false)
+      setAddingOrder(false);
     }
-  }
+  };
 
   const origin = window.location.origin;
   const driverLink = `${origin}/driver/${response.publicCodeDeliveryman}`;
@@ -39,7 +43,6 @@ export function StepSuccess({ response, onManage, onNew, onAddOrder }: Props) {
 
   return (
     <div className={styles.wrapper}>
-
       {/* ── Check ── */}
       <div className={styles.checkCircle}>✓</div>
       <h2 className={styles.title}>Entrega criada!</h2>
@@ -60,7 +63,7 @@ export function StepSuccess({ response, onManage, onNew, onAddOrder }: Props) {
       {response.orders.length > 0 && (
         <div className={styles.ordersSection}>
           <span className={styles.sectionLabel}>Pedido inicial</span>
-          {response.orders.map(order => (
+          {response.orders.map((order) => (
             <div key={order.code} className={styles.orderRow}>
               <span className={styles.orderCode}>{order.code}</span>
               <span
@@ -81,10 +84,13 @@ export function StepSuccess({ response, onManage, onNew, onAddOrder }: Props) {
           onClick={handleAddOrder}
           disabled={addingOrder}
         >
-          {addingOrder
-            ? <><span className={styles.spinner} /> Adicionando...</>
-            : '+ Novo pedido'
-          }
+          {addingOrder ? (
+            <>
+              <span className={styles.spinner} /> Adicionando...
+            </>
+          ) : (
+            "+ Novo pedido"
+          )}
         </button>
         <button className={styles.btnManage} onClick={onManage}>
           Gerenciar entrega →
@@ -93,7 +99,6 @@ export function StepSuccess({ response, onManage, onNew, onAddOrder }: Props) {
           Ver todas as entregas
         </button>
       </div>
-
     </div>
   );
 }

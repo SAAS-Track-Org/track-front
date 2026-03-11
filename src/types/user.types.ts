@@ -41,8 +41,7 @@ export interface UserInfo {
 }
 
 export interface LoginRequest {
-  email: string;
-  password: string;
+  email: string
 }
 
 export interface AuthUser {
